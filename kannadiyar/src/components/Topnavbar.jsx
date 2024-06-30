@@ -67,7 +67,7 @@ export default function Topnavbar() {
       const data = await response.json();
       console.log(data);
       sessionStorage.setItem("result", JSON.stringify(data));
-      window.location.href = "#/result";
+      window.location.href = "/result";
     } catch (error) {
       console.error("Error fetching product:", error);
     }
@@ -101,11 +101,11 @@ export default function Topnavbar() {
   };
 
   const menuLinks = [
-    { to: `#/home/${custId}`, text: "Home" },
-    { to: "#/Products", text: "Products" },
-    { to: "#/About", text: "About Us" },
-    { to: "#/Contact", text: "Contact" },
-    { to: "#/Reviews", text: "Reviews" },
+    { to: `/${custId}`, text: "Home" },
+    { to: "/Products", text: "Products" },
+    { to: "/About", text: "About Us" },
+    { to: "/Contact", text: "Contact" },
+    { to: "/Reviews", text: "Reviews" },
   ];
 
   // Handle showing suggestions
@@ -145,13 +145,13 @@ export default function Topnavbar() {
   return (
     <nav className=" bg-primecolor border-b-2 border-primecolor sticky top-0 z-50 ">
       <div className="flex flex-row ">
-        {/* logo */}
-        <img
-          src={logo}
-          alt="kannadiyar-logo"
-          className="lg:ml-72 ml-2 mt-2 mr-1 lg:mr-28 w-28 h-16"
-        />
-        {/* place holder starts */}
+        <a href="/">
+          <img
+            src={logo}
+            alt="kannadiyar-logo"
+            className="lg:ml-72 ml-2 mt-2 mr-1 lg:mr-28 w-28 h-16"
+          />
+        </a>
         <Form
           className="flex flex-row h-11 ml-2 w-72 lg:w-80 relative"
           ref={wrapperRef}
@@ -196,7 +196,7 @@ export default function Topnavbar() {
           <div className="flex flex-col ml-1 lg:ml-28">
             <button
               className="text-sm lg:text-lg bg-orange-100 text-primecolor hover:bg-primecolor font-content lg:font-semibold px-4 py-2 rounded-lg ml-4 mt-1 hover:text-orange-100 cursor-pointer"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/signup")}
             >
               Login
             </button>

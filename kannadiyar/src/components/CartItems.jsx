@@ -1,5 +1,6 @@
 import React from "react";
 
+// WishlistItem Component
 const WishlistItem = ({ name, price, image, detail, status }) => (
   <tr className="border-b-2">
     <td className="p-4">
@@ -14,7 +15,7 @@ const WishlistItem = ({ name, price, image, detail, status }) => (
       <p>{detail}</p>
     </td>
     <td className="p-4">
-      <p className="text-gray-600">${price}</p>
+      <p className="text-gray-600">${price.toFixed(2)}</p>
     </td>
     <td className="p-4">
       <p className="text-gray-600">{status}</p>
@@ -22,6 +23,7 @@ const WishlistItem = ({ name, price, image, detail, status }) => (
   </tr>
 );
 
+// WishlistItems Component
 const WishlistItems = () => {
   const wishlistItems = [
     {

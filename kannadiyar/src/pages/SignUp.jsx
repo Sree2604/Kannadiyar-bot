@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import { Toast } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -31,7 +30,7 @@ const SignUp = () => {
         sessionStorage.setItem("token", token);
         console.log("Login successful...");
         const custId = data.cust_id;
-        navigate(`/home/${custId}`);
+        navigate(`/${custId}`);
       } else {
         toast.error(data.message, {
           position: toast.POSITION.TOP_RIGHT,
@@ -46,7 +45,7 @@ const SignUp = () => {
 
   const handleGuest = () => {
     const guestId = 0;
-    navigate(`/home/${guestId}`);
+    navigate(`/${guestId}`);
   };
 
   const handleRegister = async (e) => {
@@ -90,7 +89,7 @@ const SignUp = () => {
           <div className="flex justify-center items-center">
             {" "}
             <img
-              src="src/assets/logo.png"
+              src="../src/assets/logo.png"
               alt="kannadiyar-logo"
               className="w-32 h-20"
             />{" "}

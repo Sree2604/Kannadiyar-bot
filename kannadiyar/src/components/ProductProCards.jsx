@@ -166,12 +166,6 @@ function ProductProCards({ product }) {
                   <Card.Body>
                     <div className="flex ">
                       <Drop weight={val.weight} />
-                      <div className=" flex">
-                        <Card.Text className="font-content text-green-300 flex justify-self-end  ml-12 ">
-                          INSTOCK - &nbsp;
-                        </Card.Text>
-                        <Card.Text className="flex ">{val.stock}</Card.Text>
-                      </div>
                     </div>
                     <div className=" font-content flex flex-nowrap gap-20">
                       <Card.Title className="font-content  text-red-700 pt-2">

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createHashRouter } from "react-router-dom";
 import "./index.css";
 
+// Import pages/components
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import About from "./pages/About";
@@ -21,11 +22,13 @@ import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
 import ForgetPassword from "./components/ForgetPassword";
 import Test from "./components/Test";
+import ErrorPage from "./pages/ErrorPage";
 
+// Define routes
 const router = createHashRouter([
   {
-    path: "/home/:custId",
-    element: <Home />,
+    path: "/signup",
+    element: <SignUp />,
   },
   {
     path: "/Products",
@@ -64,8 +67,14 @@ const router = createHashRouter([
     element: <Wishlist />,
   },
   {
+    path: "/:custId",
+    element: <Home />,
+  },
+
+  {
     path: "/",
-    element: <SignUp />,
+    to: "/0",
+    element: <Home />,
   },
   {
     path: "/booking",
@@ -95,8 +104,13 @@ const router = createHashRouter([
     path: "/test",
     element: <Test />,
   },
+  {
+    path: "*",
+    element: <ErrorPage />,
+  },
 ]);
 
+// Render the application
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />

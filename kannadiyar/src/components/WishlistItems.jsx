@@ -3,6 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const baseurl = import.meta.env.VITE_API_URL;
+
 const WishlistItem = ({
   id,
   product_name,
@@ -48,57 +49,37 @@ const WishlistItem = ({
 const WishlistItems = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [wishlistItems, setWishListItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isGuestMode, setIsGuestMode] = useState(false);
 
   const custId = sessionStorage.getItem("custId");
-  // console.log(custId);
 
-  const addToCart = async (productId) => {
-    if (custId == "0" || custId == null) {
-      toast.error("You are in guest mode", {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-    } else {
+  useEffect(() => {
+    if (custId === "0" || custId === null) {
+      setIsGuestMode(true);
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchWishList = async () => {
       try {
-        const response = await fetch(`${baseurl}addToCart/?action=add`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            custId: custId,
-            prodId: productId,
-            quantity: 1,
-          }),
-        });
-        if (response.ok) {
-          // If successful, update the local state to reflect the added item
-          toast.success("Successfully added to cart...!", {
-            position: toast.POSITION.TOP_RIGHT,
-          });
-          window.location.reload();
+        const res = await fetch(`${baseurl}api/wishlist/${custId}`);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setWishListItems(data);
         } else {
-          toast.warning("Already in cart...!", {
-            position: toast.POSITION.TOP_RIGHT,
-          });
+          setWishListItems([]);
         }
       } catch (error) {
-        console.error("Error adding item to wishlist:", error);
+        console.error("Error fetching wishlist:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }
-  };
-  // const custId =sessionStorage.getItem('custid');
-  const fetchWishList = async () => {
-    const res = await fetch(`${baseurl}api/wishlist/${custId}`);
-    const data = await res.json();
-    return data;
-  };
-  useEffect(() => {
-    const getWishList = async () => {
-      const wishlistFromServer = await fetchWishList();
-      setWishListItems(wishlistFromServer);
     };
-    getWishList();
-  });
+
+    fetchWishList();
+  }, [custId]);
+
   const handleSelect = (itemId) => {
     const isSelected = selectedItems.includes(itemId);
     if (isSelected) {
@@ -108,36 +89,74 @@ const WishlistItems = () => {
     }
   };
 
-  const handleRemove = async (product) => {
-    const res = await fetch(`${baseurl}wishlist/?action=delete`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        custId: custId,
-        product: product,
-      }),
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      console.error("Error:", data.error);
+  const handleRemove = async (productId) => {
+    try {
+      const res = await fetch(`${baseurl}wishlist/?action=delete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          custId,
+          productId,
+        }),
+      });
+
+      if (res.ok) {
+        setWishListItems(wishlistItems.filter((item) => item.id !== productId));
+        toast.success("Item removed from wishlist.", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      } else {
+        const data = await res.json();
+        console.error("Error:", data.error);
+      }
+    } catch (error) {
+      console.error("Error removing item from wishlist:", error);
     }
   };
-  const [isGuestMode, setIsGuestMode] = useState(false);
-  useEffect(() => {
-    const custId = sessionStorage.getItem("custId");
+
+  const addToCart = async (productId) => {
     if (custId === "0" || custId === null) {
-      setIsGuestMode(true);
+      toast.error("You are in guest mode", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+      return;
     }
-  }, []);
+
+    try {
+      const response = await fetch(`${baseurl}addToCart/?action=add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          custId,
+          prodId: productId,
+          quantity: 1,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Successfully added to cart!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      } else {
+        toast.warning("Already in cart!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+    }
+  };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   if (isGuestMode) {
-    return (
-      <>
-        <h1>You are in guest mode</h1>
-      </>
-    );
+    return <h1>You are in guest mode</h1>;
   }
 
   return (
@@ -163,9 +182,6 @@ const WishlistItems = () => {
                   <th className="sm: text-sm sm: font-content lg:text-lg lg:font-content lg:p-4">
                     Price
                   </th>
-                  {/* <th className="sm: ml-1 sm: text-sm sm: font-content lg:text-lg lg:font-content lg:p-4">
-                    Stock
-                  </th> */}
                   <th className="sm: text-sm sm: font-content lg:text-lg lg:font-content lg:p-4">
                     Remove
                   </th>

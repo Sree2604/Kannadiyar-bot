@@ -6,8 +6,7 @@ import Carousels from "../components/Carousels";
 import CategoryCard from "../components/CategoryCard";
 import ProductCards from "../components/ProductCards";
 import TopPicksCards from "../components/TopPicksCards";
-import ListComponents from "../components/ListComponents";
-// import BlogCards from "../components/BlogCards";
+// import ListComponents from "../components/ListComponents";
 import Footer from "../components/Footer";
 import Halmark from "../components/Halmark";
 import { useState, useEffect } from "react";
@@ -21,13 +20,14 @@ function Home() {
   sessionStorage.setItem("custId", custId);
   const navigate = useNavigate();
   const [tokenExist, setTokenExist] = useState(false);
+
   useEffect(() => {
     if (custId != 0) {
       if (token) {
         setTokenExist(true);
       } else {
         alert("Unauthorized access");
-        navigate("/");
+        navigate("/signup");
       }
     } else {
       setTokenExist(true);
