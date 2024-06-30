@@ -1,71 +1,86 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Addressmodel from "./Addressmodel";
 import EditAddressmodel from "./EditAddressModal";
 
-// Reusable AddressCard componentx
-
 function MyAddress({ deliveryAddress, onAddressSelect }) {
   const [addresses, setAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState();
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const custId = sessionStorage.getItem("custId");
+  const baseurl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchAddressesFromServer = async () => {
-      const addressesFromServer = await fetchAddresses();
-      setAddresses(addressesFromServer);
+      try {
+        const addressesFromServer = await fetchAddresses();
+        setAddresses(addressesFromServer);
+      } catch (error) {
+        console.error("Error fetching addresses:", error);
+      }
     };
     fetchAddressesFromServer();
-    console.log(deliveryAddress);
-  }, []);
-  const baseurl = import.meta.env.VITE_API_URL;
+  }, [baseurl, custId]);
 
   const fetchAddresses = async () => {
     const res = await fetch(`${baseurl}getAddress/?custId=${custId}`);
+    if (!res.ok) throw new Error("Failed to fetch addresses");
     const data = await res.json();
     return data;
   };
 
   const updateAddress = async (address, id) => {
-    // const id = address.id;
-    // console.log(id)
-    const res = await fetch(`${baseurl}editAddress/?addressId=${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(address),
-    });
-    const result = await res.json();
-    setAddresses(
-      addresses.map((address) =>
-        address.id === id ? { ...address, result } : address
-      )
-    );
+    try {
+      const res = await fetch(`${baseurl}editAddress/?addressId=${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(address),
+      });
+      if (!res.ok) throw new Error("Failed to update address");
+      const result = await res.json();
+      setAddresses(addresses.map((addr) => (addr.id === id ? result : addr)));
+    } catch (error) {
+      console.error("Error updating address:", error);
+    }
   };
 
   const handleDelete = async (id) => {
-    const res = await fetch(`${baseurl}delAddress/${id}`, {
-      method: "DELETE",
-    });
-    setAddresses(addresses.filter((val) => val.id !== id, console.log(id)));
+    try {
+      const res = await fetch(`${baseurl}delAddress/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete address");
+      setAddresses(addresses.filter((addr) => addr.id !== id));
+    } catch (error) {
+      console.error("Error deleting address:", error);
+    }
   };
 
   const addAddress = async (address) => {
-    const res = await fetch(`${baseurl}addAddress/?custId=${custId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(address),
-    });
-    const result = await res.json();
-    setSelectedAddress([...addresses, result]);
+    try {
+      const res = await fetch(`${baseurl}addAddress/?custId=${custId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(address),
+      });
+      if (!res.ok) throw new Error("Failed to add address");
+      const result = await res.json();
+      setAddresses([...addresses, result]);
+    } catch (error) {
+      console.error("Error adding address:", error);
+    }
   };
 
-  const handleAddressSelection = (id) => {
-    setSelectedAddress(id);
-    sessionStorage.setItem("addressId", selectedAddress);
-    onAddressSelect(id);
-  };
+  const handleAddressSelection = useCallback(
+    (id) => {
+      setSelectedAddress(id);
+      sessionStorage.setItem("addressId", id);
+      onAddressSelect(id);
+    },
+    [onAddressSelect]
+  );
 
   const AddressCard = ({
     id,
@@ -75,54 +90,36 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
     onEdit,
     onDelete,
     onSelect,
-    state,
+    isSelected,
   }) => {
-    const handleSelectAddress = () => {
-      onSelect(id); // Call the onSelect function with the selected address ID
-    };
     return (
-      <div className="sm: border-1 sm: border-black sm: mt-3 sm: w-60 sm: p-4 md:flex md:flex-col lg:border-1 md:border-black md:mt-4 rounded-lg lg:border-2 lg:border-black lg:mt-5 lg:p-4 lg:w-3/4">
-        <div className="flex flex-row">
-          <h1 className="text-xl font-semibold mr-16">{name}</h1>
-          <div>
-            <input
-              className="h-[30px] w-[30px]"
-              type="radio"
-              value={id}
-              onChange={handleSelectAddress}
-              checked={state}
-            />
-          </div>
+      <div className="border rounded-lg p-4 mb-4 w-full max-w-sm">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-semibold">{name}</h1>
+          <input
+            className="h-5 w-5"
+            type="radio"
+            value={id}
+            onChange={() => onSelect(id)}
+            checked={isSelected}
+          />
         </div>
-        <div className="flex flex-row items-center mt-2">
-          <div className="text-3xl mr-2">
-            <ion-icon name="call-outline"></ion-icon>
-          </div>
-          <div>
-            <h1>{phone}</h1>
-          </div>
+        <div className="flex items-center mt-2">
+          <ion-icon name="call-outline" className="text-2xl mr-2"></ion-icon>
+          <span>{phone}</span>
         </div>
-        <div className="flex flex-row items-center mt-2">
-          <div className="text-3xl mr-2">
-            <ion-icon name="location-outline"></ion-icon>
-          </div>
-          <div>
-            <h1>{location}</h1>
-          </div>
+        <div className="flex items-center mt-2">
+          <ion-icon
+            name="location-outline"
+            className="text-2xl mr-2"
+          ></ion-icon>
+          <span>{location}</span>
         </div>
         <div className="flex justify-end mt-4">
-          <div className="cursor-pointer lg:text-2xl">
-            <EditAddressmodel
-              addressDetail={updateAddress}
-              oldAddress={onEdit}
-            />
-          </div>
-          <div className="cursor-pointer ml-4" onClick={onDelete}>
-            <ion-icon
-              name="trash-outline"
-              class="text-red-500 lg:text-2xl"
-            ></ion-icon>
-          </div>
+          <EditAddressmodel addressDetail={updateAddress} oldAddress={onEdit} />
+          <button className="ml-4 text-red-500" onClick={() => onDelete(id)}>
+            <ion-icon name="trash-outline" className="text-2xl"></ion-icon>
+          </button>
         </div>
       </div>
     );
@@ -130,7 +127,7 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
 
   return (
     <div className="flex flex-col items-center">
-      {!addresses ? (
+      {addresses.length === 0 ? (
         <Addressmodel addressDetail={addAddress} />
       ) : (
         <>
@@ -142,9 +139,9 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
               phone={address.phone}
               location={address.state}
               onEdit={address}
-              onSelect={(id) => handleAddressSelection(id)}
-              onDelete={() => handleDelete(address.id)}
-              state={selectedAddress === address.id}
+              onDelete={handleDelete}
+              onSelect={handleAddressSelection}
+              isSelected={selectedAddress === address.id}
             />
           ))}
         </>
