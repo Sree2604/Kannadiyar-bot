@@ -289,7 +289,7 @@ function OrderBooking() {
             </div>
           </div>
           <div className="w-full sm:w-4/6 m-2 flex flex-col gap-8">
-            <div className="bg-[#638759] rounded-lg shadow-lg p-2 w-full flex flex-col gap-3">
+            <div className="bg-primecolor rounded-lg shadow-lg p-2 w-full flex flex-col gap-3">
               <h3 className="text-lg font-semibold text-white">
                 1. Select a Delivery Address
               </h3>
@@ -315,7 +315,7 @@ function OrderBooking() {
                 </>
               )}
             </div>
-            <div className="flex flex-col bg-[#638759] rounded-lg shadow-lg p-2 w-full gap-3">
+            <div className="flex flex-col bg-primecolor rounded-lg shadow-lg p-2 w-full gap-3">
               <h3 className="text-lg font-semibold text-white">
                 2. Select a Payment Method
               </h3>
@@ -347,12 +347,15 @@ function OrderBooking() {
                   <p className="text-lg font-semibold">
                     Payment Method: {paymentMethod}
                   </p>
+                  <p className="text-base font-medium">
+                    we'll Contact soon to confirm your booking
+                  </p>
                 </div>
               )}
             </div>
 
             {showPaymentMethod && (
-              <div className="bg-[#638759] rounded-lg shadow-lg p-2 w-full">
+              <div className="bg-primecolor rounded-lg shadow-lg p-2 w-full">
                 <h3 className="text-lg font-semibold text-white">
                   3. Apply Coupon and Place Order
                 </h3>
@@ -368,14 +371,14 @@ function OrderBooking() {
                     <button
                       onClick={handleApplyCoupon}
                       disabled={discountPrice !== 0}
-                      className="bg-green-800 text-white py-2 px-4 rounded w-full"
+                      className="bg-[#ffedd5] text-black py-2 px-4 rounded w-full"
                     >
                       Apply Coupon
                     </button>
                   </div>
                   <button
                     onClick={handleCheckout}
-                    className="bg-green-800 text-white py-2 px-4 rounded w-full"
+                    className="bg-[#ffedd5] text-black py-2 px-4 rounded w-full"
                   >
                     Place Order
                   </button>
