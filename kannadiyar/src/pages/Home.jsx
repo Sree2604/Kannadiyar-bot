@@ -42,7 +42,12 @@ function Home() {
   }, []);
 
   const fetchProducts = async () => {
-    const res = await fetch(`${baseurl}`);
+    const res = await fetch(`${baseurl}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + sessionStorage.getItem("token"), // Add token if required
+      },
+    });
     const data = await res.json();
     return data;
   };

@@ -6,12 +6,12 @@ function ListComponents() {
 
   const handleCategoryClick = (category) => {
     // const category
-    window.location.href = `/categoryResult/${category.category}/null`;
+    window.location.href = `#/categoryResult/${category.category}/null`;
   };
 
   const handleSubCategoryClick = (subcategory, event) => {
     event.stopPropagation(); // Stop event propagation
-    window.location.href = `/categoryResult/null/${subcategory}`;
+    window.location.href = `#/categoryResult/null/${subcategory}`;
   };
   const [categories, setCategories] = useState([]);
 

@@ -9,7 +9,7 @@ const Card = ({ details, color }) => {
     <div className="flex-shrink-0 w-64 p-4 m-8  text-center font-semibold text-sm rounded-lg">
       <div
         className={color + " p-4 rounded-md cursor-pointer"}
-        onClick={() => navigate(`/categoryResult/${details.category}/null`)}
+        onClick={() => navigate(`#/categoryResult/${details.category}/null`)}
       >
         <img
           className="rounded-full w-64 h-40 p-2 "
@@ -47,7 +47,6 @@ const CategoryCard = () => {
       };
     });
   };
-  console.log(categories);
   const [slideIndex, setSlideIndex] = useState(0);
 
   const handleNextSlide = () => {
@@ -90,9 +89,6 @@ const CategoryCard = () => {
     const data = await res.json();
     return data;
   };
-  console.log(baseurl);
-
-  console.log(categories);
   return (
     <div className="sm: ml-0  lg:ml-10 lg:mr-10">
       <div className="flex items-center">

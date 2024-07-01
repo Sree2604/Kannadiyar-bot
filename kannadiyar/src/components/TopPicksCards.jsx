@@ -22,13 +22,14 @@ function TopPicksCards({ product }) {
           <p className="text-gray-500">Select any category of Products...</p>
         ) : (
           <>
-            {randomProducts.map((val) => (
+            {randomProducts.map((val, index) => (
               <>
                 <Card
+                  key={index}
                   style={{}}
                   className=" sm: mt-3 sm: ml-5 sm: mr-5 sm: bg-red-100 lg:m-auto lg:w-80 lg:bg-red-100 lg:ml-2 lg:-mr-2"
                 >
-                  <div className="flex ">
+                  <div className="flex " key={index}>
                     <div>
                       <Card.Img
                         className="p-2 h-36  w-96 "

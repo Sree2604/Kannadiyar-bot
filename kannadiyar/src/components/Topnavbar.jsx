@@ -34,7 +34,7 @@ export default function Topnavbar() {
     };
     fetchProductsName();
   }, []);
-  console.log(searchInput);
+  // console.log(searchInput);
 
   // Handle search input change
   const handleSearch = (e) => {
@@ -65,9 +65,8 @@ export default function Topnavbar() {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      console.log(data);
       sessionStorage.setItem("result", JSON.stringify(data));
-      window.location.href = "/result";
+      window.location.href = "#/result";
     } catch (error) {
       console.error("Error fetching product:", error);
     }
@@ -91,7 +90,6 @@ export default function Topnavbar() {
     };
     fetchCount();
   }, [custId]);
-  console.log(cartCount, wishlistCount);
   // Handle menu toggle for mobile view
   const { pathname } = useLocation();
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -101,11 +99,11 @@ export default function Topnavbar() {
   };
 
   const menuLinks = [
-    { to: `/${custId}`, text: "Home" },
-    { to: "/Products", text: "Products" },
-    { to: "/About", text: "About Us" },
-    { to: "/Contact", text: "Contact" },
-    { to: "/Reviews", text: "Reviews" },
+    { to: `#/${custId}`, text: "Home" },
+    { to: "#/Products", text: "Products" },
+    { to: "#/About", text: "About Us" },
+    { to: "#/Contact", text: "Contact" },
+    { to: "#/Reviews", text: "Reviews" },
   ];
 
   // Handle showing suggestions
@@ -196,7 +194,7 @@ export default function Topnavbar() {
           <div className="flex flex-col ml-1 lg:ml-28">
             <button
               className="text-sm lg:text-lg bg-orange-100 text-primecolor hover:bg-primecolor font-content lg:font-semibold px-4 py-2 rounded-lg ml-4 mt-1 hover:text-orange-100 cursor-pointer"
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("#/signup")}
             >
               Login
             </button>
@@ -259,13 +257,13 @@ export default function Topnavbar() {
               ))}
               <li className="lg:space-y-0 space-y-4 lg:hidden">
                 <div className="text-letter cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("/MyAccount")}>My Account</h1>
+                  <h1 onClick={() => navigate("#/MyAccount")}>My Account</h1>
                 </div>
                 <div className="text-letter cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("/Wishlist")}>Wishlist</h1>
+                  <h1 onClick={() => navigate("#/Wishlist")}>Wishlist</h1>
                 </div>
                 <div className="text-letter cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("/booking")}>Cart</h1>
+                  <h1 onClick={() => navigate("#/booking")}>Cart</h1>
                 </div>
               </li>
             </ul>
