@@ -66,7 +66,7 @@ export default function Topnavbar() {
       }
       const data = await response.json();
       sessionStorage.setItem("result", JSON.stringify(data));
-      window.location.href = "#/result";
+      window.location.href = "/#/result";
     } catch (error) {
       console.error("Error fetching product:", error);
     }
@@ -99,11 +99,11 @@ export default function Topnavbar() {
   };
 
   const menuLinks = [
-    { to: `#/${custId}`, text: "Home" },
-    { to: "#/Products", text: "Products" },
-    { to: "#/About", text: "About Us" },
-    { to: "#/Contact", text: "Contact" },
-    { to: "#/Reviews", text: "Reviews" },
+    { to: `/${custId}`, text: "Home" },
+    { to: "/Products", text: "Products" },
+    { to: "/About", text: "About Us" },
+    { to: "/Contact", text: "Contact" },
+    { to: "/Reviews", text: "Reviews" },
   ];
 
   // Handle showing suggestions
@@ -194,7 +194,7 @@ export default function Topnavbar() {
           <div className="flex flex-col ml-1 lg:ml-28">
             <button
               className="text-sm lg:text-lg bg-orange-100 text-primecolor hover:bg-primecolor font-content lg:font-semibold px-4 py-2 rounded-lg ml-4 mt-1 hover:text-orange-100 cursor-pointer"
-              onClick={() => navigate("#/signup")}
+              onClick={() => navigate("/signup")}
             >
               Login
             </button>

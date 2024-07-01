@@ -255,10 +255,41 @@ function OrderBooking() {
       <Topofferbar />
       <Topnavbar />
       <div className="flex flex-col justify-center items-center">
-        <h2 className="text-2xl font-bold">Checkout</h2>
-        <div className="w-full flex">
-          <div className="w-4/6 m-3 flex flex-col gap-8">
-            <div className="bg-[#638759] rounded-lg shadow-lg p-4 w-full flex flex-col gap-3">
+        <h2 className="text-xl font-bold">Checkout</h2>
+        <div className="w-4/5 flex flex-col sm:flex-row">
+          <div className=" m-2 bg-white shadow-lg p-2 rounded-lg h-96 sm:hidden">
+            <h3 className="text-xl font-bold mb-4">Order Summary</h3>
+            <div className="mb-4">
+              {cartItems.map((item) => (
+                <div key={item.id} className="flex justify-between mb-2">
+                  <p>
+                    {item.product_name} ({item.quantity})
+                  </p>
+                  <p>₹{(parseFloat(item.mrp) * item.quantity).toFixed(2)}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between mb-2">
+              <p>Subtotal</p>
+              <p>₹{subTotal.toFixed(2)}</p>
+            </div>
+            {discountPrice > 0 && (
+              <div className="flex justify-between mb-2">
+                <p>Discount</p>
+                <p>-₹{discountPrice.toFixed(2)}</p>
+              </div>
+            )}
+            <div className="flex justify-between mb-2">
+              <p>Delivery Charge</p>
+              <p>₹{deliveryCharge}</p>
+            </div>
+            <div className="flex justify-between font-bold mb-2">
+              <p>Total</p>
+              <p>₹{(subTotal + deliveryCharge).toFixed(2)}</p>
+            </div>
+          </div>
+          <div className="w-full sm:w-4/6 m-2 flex flex-col gap-8">
+            <div className="bg-[#638759] rounded-lg shadow-lg p-2 w-full flex flex-col gap-3">
               <h3 className="text-lg font-semibold text-white">
                 1. Select a Delivery Address
               </h3>
@@ -284,8 +315,7 @@ function OrderBooking() {
                 </>
               )}
             </div>
-
-            <div className="flex flex-col bg-[#638759] rounded-lg shadow-lg p-4 w-full gap-3">
+            <div className="flex flex-col bg-[#638759] rounded-lg shadow-lg p-2 w-full gap-3">
               <h3 className="text-lg font-semibold text-white">
                 2. Select a Payment Method
               </h3>
@@ -311,8 +341,9 @@ function OrderBooking() {
                   </button>
                 </div>
               )}
+
               {showPaymentMethod && (
-                <div className="bg-white rounded-lg p-4">
+                <div className="bg-white rounded-lg p-2">
                   <p className="text-lg font-semibold">
                     Payment Method: {paymentMethod}
                   </p>
@@ -321,11 +352,11 @@ function OrderBooking() {
             </div>
 
             {showPaymentMethod && (
-              <div className="bg-[#638759] rounded-lg shadow-lg p-4 w-full">
+              <div className="bg-[#638759] rounded-lg shadow-lg p-2 w-full">
                 <h3 className="text-lg font-semibold text-white">
                   3. Apply Coupon and Place Order
                 </h3>
-                <div className="bg-white rounded-lg p-4">
+                <div className="bg-white rounded-lg p-2">
                   <div className="mb-4">
                     <input
                       type="text"
@@ -352,7 +383,7 @@ function OrderBooking() {
               </div>
             )}
           </div>
-          <div className="w-2/6 m-3 bg-white shadow-lg p-4 rounded-lg h-96">
+          <div className="w-2/6 m-2 bg-white shadow-lg p-2 rounded-lg h-96 hidden sm:flex sm:flex-col">
             <h3 className="text-xl font-bold mb-4">Order Summary</h3>
             <div className="mb-4">
               {cartItems.map((item) => (
