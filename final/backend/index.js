@@ -12,6 +12,7 @@ const bcrypt = require("bcrypt");
 const uniqid = require("uniqid");
 const sha256 = require("sha256");
 const axios = require("axios");
+const nodemailer = require('nodemailer')
 const { v4: uuidv4 } = require('uuid');
 dotenv.config();
 
@@ -42,11 +43,23 @@ app.use("/categories", express.static(path.join(__dirname, "categories")));
 app.use("/carousels", express.static(path.join(__dirname, "carousels")));
 
 const id = process.env.ID;
-const PHONE_PE_HOST_URL = "https://api.phonepe.com/apis/hermes";
-const SALT_INDEX = 1;
-const SALT_KEY = "e77acd71-581a-4a4b-a19b-73599b654568";
-const MERCHANT_ID = "M1N7YIUDDP8L";
-const APP_BE_URL = "https://kannadiyar-bot.vercel.app/";
+const PHONE_PE_HOST_URL = process.env.PHONE_PE_HOST_URL
+const SALT_INDEX = process.env.SALT_INDEX
+const SALT_KEY = process.env.SALT_KEY
+const MERCHANT_ID = process.env.MERCHANT_ID
+const APP_BE_URL = process.env.APP_BE_URL
+
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token == null) return res.sendStatus(401); // if there isn't any token
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next(); // pass the execution off to whatever request the client intended
+  });
+};
 
 app.get("/pay", async function (req, res, next) {
   // Initiate a payment
@@ -221,40 +234,49 @@ app.post("/addToCart", async (req, res) => {
   }
 });
 
+// Initialize Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  host: 'kannadiyar.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: 'support@kannadiyar.com',
+    pass: 'cmsmail#123$',
+  },
+});
+
+// Endpoint to handle Cash on Delivery (COD) orders
 app.post('/codOrder', async (req, res) => {
-  const { custId, addressId, cartItems } = req.body;
-  console.log(addressId)
+  const { custId, addressId, cartItems, usedCoupon } = req.body;
 
   try {
-    // Call the service function to create the order
+    // Begin transaction
     await pool.query('BEGIN');
 
     const orderId = uuidv4(); // Generate a unique order ID
 
-    const addressQry = await pool.query("SELECT * FROM customer_address WHERE id = $1", [addressId]);
+    // Fetch customer address details from database
+    const addressQry = await pool.query('SELECT * FROM customer_address WHERE id = $1', [addressId]);
     if (addressQry.rows.length === 0) {
-      // If no address found, respond with an appropriate error message
+      // Rollback transaction and send error response if address not found
+      await pool.query('ROLLBACK');
       return res.status(404).json({ message: 'Address not found.' });
     }
 
-    const result = addressQry.rows[0];
+    const { address, locality, town, district, state, pincode, phone, name, email: customerEmail } = addressQry.rows[0];
+    const customerName = name;
 
-    const address = result.address + result.locality + result.town + result.district + result.state + result.pincode;
-    const phoneNumber = result.phone;
-    const customerName = result.name;
-
-
+    // Insert order details into order_details table
     for (const item of cartItems) {
       const orderDetailsQuery = `
         INSERT INTO order_details (order_id, cust_id, address, phone_number, customer_name, prod_id, product_name, unit_price, quantity, status, checkout_type)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       `;
-      console.log(item)
       const orderDetailsValues = [
         orderId,
         custId,
-        address,
-        phoneNumber,
+        `${address} ${locality} ${town} ${district} ${state} ${pincode}`,
+        phone,
         customerName,
         item.id,
         item.product_name,
@@ -263,25 +285,162 @@ app.post('/codOrder', async (req, res) => {
         'Pending', // Assuming 'Pending' is the initial status for a new order
         'Cash on Delivery'
       ];
+
       await pool.query(orderDetailsQuery, orderDetailsValues);
     }
 
-    await pool.query("DELETE FROM customer_cart WHERE customer_id = $1", [custId])
+    // Delete items from customer_cart after successful order placement
+    await pool.query('DELETE FROM customer_cart WHERE customer_id = $1', [custId]);
+
+    // Commit transaction
     await pool.query('COMMIT');
+    let message = generateHtmlTemplate(orderId, customerName, address, cartItems);
+
+    // Send email with order details
+
+    // Send the email using Nodemailer
+    let info = await transporter.sendMail({
+      from: 'support@kannadiyar.com',
+      to: 'ds04aranganthan@gmail.com',
+      cc: 'support@kannadiyar.com',
+      subject: `Your Order Confirmation - Order ID: ${orderId}`,
+      html: message,
+      attachments: [
+        {
+          filename: 'maillogo.png',
+          path: 'images/maillogo.png',
+          cid: 'logo',
+        },
+        {
+          filename: 'cubupi.jpg',
+          path: 'images/cubupi.jpg',
+          cid: 'cubupi',
+        },
+      ],
+    });
+    console.log('Message sent: %s', info);
+
+    // Send success response to client
     res.status(201).json({ message: 'Order placed successfully!' });
   } catch (error) {
     console.error('Error creating COD order:', error);
+    // Rollback transaction on error
+    await pool.query('ROLLBACK');
+    // Send error response to client
     res.status(500).json({ message: 'Failed to place order. Please try again later.' });
   }
 });
 
+// Function to generate HTML email template
+function generateHtmlTemplate(orderId, customerName, address, cartItems) {
+  let html = `
+    <html>
+    <body style="font-family: trebuchet ms; font-size:18px;">
+      <table border="0" style="width:100%;">
+        <tr>
+          <td><img src="cid:logo"></td>
+        </tr>
+        <tr>
+          <td align="left">Dear <b>${customerName},</b></td>
+        </tr>
+        <tr>
+          <td align="left">Thanks for ordering from us.</td>
+        </tr>
+        <tr>
+          <td align="left"><br>Your Order details :</td>
+        </tr>
+        <tr>
+          <td align="left">Order ID # ${orderId}</td>
+        </tr>
+        <tr>
+          <td align="left">Order Date : ${new Date().toDateString()}</td>
+        </tr>
+        <tr>
+          <td align="left">Order Amount Rs. ${calculateTotal(cartItems)}</td>
+        </tr>
+        <tr>
+          <td align="left"><br>Your delivery details :</td>
+        </tr>
+        <tr>
+          <td align="left">${customerName}</td>
+        </tr>
+        <tr>
+          <td align="left">${address}</td>
+        </tr>
+        <!-- Add more address details as needed -->
+        <tr>
+          <td align="left"><br>Order Details:</td>
+        </tr>
+        <tr>
+          <td>
+            <table style="width:100%;border:1px solid silver;" cellpadding="0" cellspacing="0">
+              <tr style="width:100%;background-color:#000; color:white;" align="center">
+                <th>#</th>
+                <th align="center" style="background-color:#000;color:white;">Product Name</th>
+                <th align="center" style="background-color:#000;color:white;">Qty.</th>
+                <th align="center" style="background-color:#000;color:white;">Unit</th>
+                <th align="center" style="background-color:#000;color:white;">Rate</th>
+                <th align="center" style="background-color:#000;color:white;">Amount</th>
+              </tr>`;
+
+  // Loop through cartItems to add each item to the email
+  cartItems.forEach((item, index) => {
+    html += `
+      <tr>
+        <td style="padding:5px;border:1px solid silver;"><b>${index + 1}</b></td>
+        <td style="padding:5px;border:1px solid silver;"><b>${item.product_name}</b></td>
+        <td style="text-align:center; padding:5px;border:1px solid silver;"><b>${item.quantity}</b></td>
+        <td style="padding:5px;border:1px solid silver;"><b>Unit</b></td>
+        <td style="text-align:right; padding:5px;border:1px solid silver;"><b>${item.mrp}</b></td>
+        <td style="text-align:right; padding:5px;border:1px solid silver;"><b>${item.mrp * item.quantity}</b></td>
+      </tr>`;
+  });
+
+  // Add totals and closing tags to the HTML
+  html += `
+      <tr>
+        <td colspan="5" align="right"> Sub Total : </td>
+        <td align="right">${calculateTotal(cartItems)}</td>
+      </tr>
+      <tr>
+        <td colspan="5" align="right"> Transport Charges : </td>
+        <td align="right">Transport Charges</td>
+      </tr>
+      <tr>
+        <td colspan="5" align="right"> Amount Payable : </td>
+        <td align="right">${calculateTotal(cartItems)}</td>
+      </tr>
+      </table>
+      </td>
+      </tr>
+      <tr>
+        <td><img src="cid:cubupi"></td>
+      </tr>
+      
+      <tr>
+        <td align="left"><br><br>Thanks & Regards,<br>Team Example<br>+91 70921 07272</td>
+      </tr>
+      </table>
+    </body>
+    </html>`;
+
+  return html;
+}
+
+// Function to calculate total amount from cartItems
+function calculateTotal(cartItems) {
+  let total = 0;
+  cartItems.forEach(item => {
+    total += item.mrp * item.quantity;
+  });
+  return total;
+}
 app.get('/fetchOrder/:custId', async (req, res) => {
   try {
     const { custId } = req.params;
-    console.log(custId)
+
     const custOrders = await pool.query("SELECT * FROM order_details WHERE cust_id = $1", [custId]);
     const result = custOrders.rows
-    console.log(result)
     res.status(201).json(result)
   } catch (error) {
     console.error(error.message);
@@ -298,12 +457,12 @@ app.get("/calcTariff", async (req, res) => {
     );
     const userState = fetchState.rows[0].state;
 
-    const regionalOne = ["Tamil Nadu", "Andhra Pradesh", "Karnataka"];
+    const regionalOne = ["Tamil Nadu", "Pondicherry"];
     const regionalTwo = [
-      "Northeast",
-      "Jammu and Kashmir",
+      "Karnataka",
+      "Andhra Pradesh",
       "Kerala",
-      "Andaman and Nicobar Islands",
+      "Telangana",
     ];
 
     let result = "";
@@ -311,98 +470,41 @@ app.get("/calcTariff", async (req, res) => {
       result = "R1";
     } else if (regionalTwo.includes(userState)) {
       result = "R2";
+    } else if (userState === "Andaman & Nicobar Islands") {
+      result = "ANI";
     } else {
-      result = "ROI";
+      result = "R3";
     }
 
-    const tarrifCharges = {
-      R1: {
-        500: 50,
-        1000: 60,
-        1500: 80,
-        2000: 100,
-        2500: 110,
-        3000: 120,
-        3500: 130,
-        4000: 150,
-        4500: 165,
-        5000: 180,
-        6000: 210,
-        7000: 240,
-        8000: 270,
-        9000: 300,
-        10000: 330,
-        11000: 360,
-        12000: 390,
-        13000: 420,
-        14000: 450,
-        15000: 470,
-        16000: 500,
-        17000: 525,
-        18000: 550,
-        19000: 575,
-        20000: 600,
-      },
-      ROI: {
-        500: 60,
-        1000: 80,
-        1500: 100,
-        2000: 140,
-        2500: 170,
-        3000: 200,
-        3500: 230,
-        4000: 260,
-        4500: 290,
-        5000: 320,
-        6000: 370,
-        7000: 420,
-        8000: 470,
-        9000: 510,
-        10000: 550,
-        11000: 590,
-        12000: 630,
-        13000: 670,
-        14000: 710,
-        15000: 750,
-        16000: 790,
-        17000: 830,
-        18000: 870,
-        19000: 910,
-        20000: 950,
-      },
-      R2: {
-        500: 70,
-        1000: 100,
-        1500: 140,
-        2000: 180,
-        2500: 220,
-        3000: 260,
-        3500: 295,
-        4000: 320,
-        4500: 350,
-        5000: 380,
-        6000: 450,
-        7000: 520,
-        8000: 580,
-        9000: 620,
-        10000: 650,
-        11000: 700,
-        12000: 750,
-        13000: 800,
-        14000: 850,
-        15000: 900,
-        16000: 950,
-        17000: 1000,
-        18000: 1050,
-        19000: 1100,
-        20000: 1150,
-      },
-    };
+    const calculateDeliveryCharge = (weightInKg) => {
 
-    const deliveryCharge = tarrifCharges[result][subWeight];
+      let deliveryCharge = 0;
+
+      if (result === "R1") {
+        deliveryCharge = 22 * Math.ceil(weightInKg);
+      } else if (result === "R2") {
+        deliveryCharge = 33 * Math.ceil(weightInKg);
+      } else if (result === "R3") {
+        if (weightInKg <= 1) {
+          deliveryCharge = 72 + (Math.ceil(weightInKg * 2) - 2) * 39;
+        } else {
+          deliveryCharge = 110 * Math.ceil(weightInKg);
+        }
+      } else if (result === "ANI") {
+        if (weightInKg <= 1) {
+          deliveryCharge = 110 + (Math.ceil(weightInKg * 2) - 2) * 55;
+        } else {
+          deliveryCharge = 165 * Math.ceil(weightInKg);
+        }
+      }
+      return deliveryCharge;
+    }
+
+    const deliveryCharge = calculateDeliveryCharge(subWeight)
     res.status(200).json({ deliveryCharge });
   } catch (error) {
-    res.status(500).json({ erro: "Internal Server Error...!!" });
+    console.error(error.message)
+    res.status(500).json({ error: "Internal Server Error...!!" });
   }
 });
 
@@ -922,7 +1024,7 @@ app.get("/search/:userInput", async (req, res) => {
   try {
     // Searching for an exact match of the product name using ILIKE in the 'product_details' table
     const exactMatch = await pool.query(
-      "SELECT * FROM product_details WHERE product_name ILIKE $1",
+      "SELECT * FROM product_details WHERE product_name ILIKE $1 OR english_name ILIKE $1",
       [userInput]
     );
 
@@ -931,30 +1033,38 @@ app.get("/search/:userInput", async (req, res) => {
       res.json(exactMatch.rows);
     } else {
       // If no exact match is found, perform a fuzzy search using Levenshtein distance
-
-      // Fetch all products from the 'product_details' table
       const allProducts = await pool.query("SELECT * FROM product_details");
       let suggestedTerms = [];
 
       // Iterate through all products to calculate Levenshtein distance and suggest relevant terms
       allProducts.rows.forEach((product) => {
-        const distance = levenshtein.get(
+        const distanceProductName = levenshtein.get(
           String(product.product_name).toLowerCase(),
           String(userInput).toLowerCase()
         );
 
+        const distanceEnglishName = levenshtein.get(
+          String(product.english_name).toLowerCase(),
+          String(userInput).toLowerCase()
+        );
+
         // Checking if the distance is within a certain threshold (here, 10)
-        if (distance <= 10) {
-          suggestedTerms.push({ exactMatch: false, product, distance });
+        if (distanceProductName <= 10) {
+          suggestedTerms.push({ exactMatch: false, product, distance: distanceProductName });
+        }
+
+        if (distanceEnglishName <= 10) {
+          suggestedTerms.push({ exactMatch: false, product, distance: distanceEnglishName });
         }
       });
 
       // Sorting suggested terms based on distance and selecting top 3 suggestions
       suggestedTerms.sort((a, b) => a.distance - b.distance);
-      const topSuggestions = suggestedTerms.slice(0, 3);
+      const topSuggestions = suggestedTerms.slice(0, 2);
 
-      res.json({ topSuggestions }); // Sending top suggested terms as a JSON response
+      res.json({ topSuggestions });
     }
+
   } catch (error) {
     res.status(500).json({ error: error.message }); // Handling errors during the search process
   }
@@ -1389,23 +1499,23 @@ app.get("/searchSuggestion", async (req, res) => {
 });
 
 app.post("/addCoupon", async (req, res) => {
-  const { couponCode, discountPrice, expirationDate, min_purchase, maxCount } =
+  const { couponCode, discountPrice, expirationDate, min_purchase } =
     req.body;
+  console.log(couponCode, discountPrice, expirationDate, min_purchase)
   if (
     !couponCode ||
     !discountPrice ||
     !expirationDate ||
-    !min_purchase ||
-    !maxCount
+    !min_purchase
   ) {
     return res.status(400).json({ error: "Couponn code is required...!" });
   }
   try {
     const addCoupon = await pool.query(
-      `INSERT INTO coupons (code, expirationDate,min_purchase,max_limit,discount) 
-      VALUES ($1,$2,$3,$4,$5)
+      `INSERT INTO coupons (code, expirationDate,min_purchase,discount) 
+      VALUES ($1,$2,$3,$4)
     `,
-      [couponCode, expirationDate, min_purchase, maxCount, discountPrice]
+      [couponCode, expirationDate, min_purchase, discountPrice]
     );
     return res.status(201).json({ message: "Coupon added successfully" });
   } catch (error) {
@@ -1438,12 +1548,12 @@ app.get("/getCoupon", async (req, res) => {
 });
 
 app.put("/editCoupon", async (req, res) => {
-  const { couponCode, discountPrice, expirationDate, min_purchase, maxCount } =
+  const { couponCode, discountPrice, expirationDate, min_purchase, id } =
     req.body;
   try {
     await pool.query(
-      "UPDATE coupons SET code = $1, discount = $2, expirationDate = $3, min_purchase = $4, max_limit = $5 WHERE id = $6",
-      [couponCode, discountPrice, expirationDate, min_purchase, maxCount]
+      "UPDATE coupons SET code = $1, discount = $2, expirationDate = $3, min_purchase = $4 WHERE id = $5",
+      [couponCode, discountPrice, expirationDate, min_purchase, id]
     );
     return res.status(201).json({ message: "Coupon updated successfully...!" });
   } catch (error) {
@@ -1453,19 +1563,21 @@ app.put("/editCoupon", async (req, res) => {
 });
 
 app.post("/coupon", async (req, res) => {
-  const { couponCode, purchaseValue } = req.body;
+  const { couponCode, purchaseValue, custId } = req.body;
+
   if (!couponCode) {
     return res.status(400).json({ error: "Coupon Code is required" });
   }
+
   try {
-    const result = await pool.query("SELECT * FROM coupons Where code = $1", [
+    const result = await pool.query("SELECT * FROM coupons WHERE code = $1", [
       couponCode,
     ]);
     const foundCoupon = result.rows[0];
 
     if (!foundCoupon) {
       console.error("Internal Server Error...!!");
-      return res.status(400).json({ message: `Invalid Coupon Code` });
+      return res.status(400).json({ message: "Invalid Coupon Code" });
     }
 
     const currentDate = new Date();
@@ -1473,7 +1585,7 @@ app.post("/coupon", async (req, res) => {
 
     if (currentDate > expirationDate) {
       console.error("Internal Server Error...!!");
-      return res.status(400).json({ message: `Coupon is expired` });
+      return res.status(400).json({ message: "Coupon is expired" });
     }
 
     if (purchaseValue < foundCoupon.min_purchase) {
@@ -1483,23 +1595,22 @@ app.post("/coupon", async (req, res) => {
       });
     }
 
-    if (foundCoupon.max_limit < 1) {
-      console.error("Internal Server Error...!!");
-      return res.status(400).json({ message: `Coupon usage limit reached` });
+    if (foundCoupon.used_by && foundCoupon.used_by.includes(parseInt(custId))) {
+      return res.status(400).json({ message: "Coupon already used by this customer" });
     }
-
+    // Apply the coupon
     return res.status(200).json({
       discount: foundCoupon.discount,
       minimumPurchase: foundCoupon.min_purchase,
     });
-    // setDiscount(foundCoupon.discount);
-    // foundCoupon.currentUses += 1;
-    // alert(`Coupon applied! You got ${foundCoupon.discount}% off`);
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ error: "Internal Server Error...!!" });
   }
+
 });
+
+
 
 app.listen(4000, () => {
   console.log("Server started on port 4000");

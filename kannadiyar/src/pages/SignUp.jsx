@@ -149,7 +149,7 @@ const SignUp = () => {
                     </button>
                   </div>
                 </form>
-                <a className=" text-blue-600 underline text-sm" href="/FGP">
+                <a className=" text-blue-600 underline text-sm" href="#/FGP">
                   Forget Password
                 </a>
               </>

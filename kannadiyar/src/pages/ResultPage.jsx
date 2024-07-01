@@ -7,26 +7,24 @@ import Halmark from "../components/Halmark";
 import GreenThing from "../components/GreenThing";
 
 function ResultPage() {
-    const [productData, setProductData] = useState([]);
-
-   
+  const [productData, setProductData] = useState([]);
 
   useEffect(() => {
-    const result = sessionStorage.getItem('result');
+    const result = sessionStorage.getItem("result");
 
     if (result) {
       const suggestions = JSON.parse(result);
 
       let newData = [];
 
-      if (suggestions.hasOwnProperty('topSuggestions')) {
+      if (suggestions.hasOwnProperty("topSuggestions")) {
         newData = suggestions.topSuggestions.map((val) => val.product);
       } else {
         newData = suggestions;
       }
-      setProductData(newData)
-      
+      setProductData(newData);
     }
+    console.log(productData);
   }, []);
 
   return (
@@ -37,7 +35,7 @@ function ResultPage() {
         <div className="lg:flex lg:flex-row lg:grid-rows-2 lg:gap-11">
           <ListComponents />
           <div className="">
-            <ProductProCards product={productData}/>
+            <ProductProCards product={productData} />
           </div>
         </div>
 

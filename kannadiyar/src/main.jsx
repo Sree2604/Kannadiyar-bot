@@ -23,6 +23,8 @@ import Cancel from "./pages/Cancel";
 import ForgetPassword from "./components/ForgetPassword";
 import Test from "./components/Test";
 import ErrorPage from "./pages/ErrorPage";
+import Guest from "./components/Guest";
+import EmailSender from "./components/EmailSender";
 
 // Define routes
 const router = createHashRouter([
@@ -37,6 +39,10 @@ const router = createHashRouter([
   {
     path: "/about",
     element: <About />,
+  },
+  {
+    path: "/test",
+    element: <EmailSender />,
   },
   {
     path: "/contact",
@@ -73,8 +79,7 @@ const router = createHashRouter([
 
   {
     path: "/",
-    to: "/0",
-    element: <Home />,
+    element: <Guest />,
   },
   {
     path: "/booking",

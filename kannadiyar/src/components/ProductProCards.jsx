@@ -11,6 +11,7 @@ function ProductProCards({ product }) {
   const [wishlistItems, setWishlistItems] = useState([]);
   const baseurl = import.meta.env.VITE_API_URL;
   const custId = sessionStorage.getItem("custId");
+  console.log(product);
   useEffect(() => {
     if (product) {
       product.forEach(async (val) => {
@@ -152,9 +153,7 @@ function ProductProCards({ product }) {
                     <Card.Img
                       className="p-2 h-48 object-cover object-right absolute overflow-hidden w-72"
                       src={`${baseurl}uploads/${val.image}`}
-                      onClick={() =>
-                        (window.location.href = `/Productpage/${val.id}`)
-                      }
+                      onClick={() => window.open(`#/Productpage/${val.id}`)}
                     ></Card.Img>
                   </div>
                   <Card.Title className="font-content pl-2 mt-52">

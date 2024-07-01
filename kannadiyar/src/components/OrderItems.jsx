@@ -1,30 +1,49 @@
 import React, { useState, useEffect } from "react";
 const baseurl = import.meta.env.VITE_API_URL;
-const OrderItems = ({ product_name, mrp, image, weight, status, quantity }) => (
-  <tr className="border-b-2">
-    <td className="p-4">
-      <img
-        src={`http://localhost:4000/uploads/${image}`}
-        alt={product_name}
-        className="rounded-full w-16 h-16 object-cover"
-      />
-    </td>
-    <td className="p-4">
-      <h3 className="text-lg font-semibold">{product_name}</h3>
-      <p>{weight}</p>
-    </td>
-    <td className="p-4">
-      <p className="text-gray-600">₹{mrp}</p>
-    </td>
-    <td className="p-4">
-      <p className="text-gray-600">{status}</p>
-    </td>
-    <td className="p-4">
-      <p className="text-gray-600">{quantity}</p>
-    </td>
-  </tr>
-);
+const OrderItems = ({
+  product_name,
+  unit_price,
+  weight,
+  status,
+  quantity,
+  prod_id,
+}) => {
+  const [image, setImage] = useState();
+  useEffect(() => {
+    const fetchProdDetailsFromServer = async () => {
+      const result = await fetch(`${baseurl}getProduct/${prod_id}`);
+      const data = await result.json();
+      console.log(data);
+      setImage(data[0].image);
+    };
+    fetchProdDetailsFromServer();
+  }, []);
 
+  return (
+    <tr className="border-b-2">
+      <td className="p-4">
+        <img
+          src={`${baseurl}uploads/${image}`}
+          alt={product_name}
+          className="rounded-full w-16 h-16 object-cover"
+        />
+      </td>
+      <td className="p-4">
+        <h3 className="text-lg font-semibold">{product_name}</h3>
+        <p>{weight}</p>
+      </td>
+      <td className="p-4">
+        <p className="text-gray-600">₹{unit_price * quantity}</p>
+      </td>
+      <td className="p-4">
+        <p className="text-gray-600">{status}</p>
+      </td>
+      <td className="p-4">
+        <p className="text-gray-600">{quantity}</p>
+      </td>
+    </tr>
+  );
+};
 const Orderitem = () => {
   const [orderedItems, setOrderItems] = useState([]);
   useEffect(() => {
@@ -37,9 +56,9 @@ const Orderitem = () => {
   }, []);
 
   const custId = sessionStorage.getItem("custId");
-  console.log(custId);
+
   const fetchOrderItems = async () => {
-    const res = await fetch(`http://localhost:4000/fetchOrder/${custId}`);
+    const res = await fetch(`${baseurl}fetchOrder/${custId}`);
     const data = await res.json();
     console.log(data);
     return data;

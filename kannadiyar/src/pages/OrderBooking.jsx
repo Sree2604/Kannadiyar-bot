@@ -6,9 +6,11 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function OrderBooking() {
   const custId = sessionStorage.getItem("custId");
+  const [loading, setLoading] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [subTotal, setSubTotal] = useState(0);
@@ -32,9 +34,36 @@ function OrderBooking() {
     let totalWeight = 0;
     cartItems.forEach((item) => {
       totalMRP += parseFloat(item.mrp) * item.quantity;
-      let weightArray = item.weight.split(" ");
-      totalWeight += parseInt(weightArray[0]) * item.quantity;
+
+      let weight = item.weight;
+      let weightInKg = 0;
+
+      // Handling weight with or without space between number and unit
+      const match = weight.match(
+        /(\d+\.?\d*)\s*(gm|grams|gram|kg|kilograms|kilogram)/i
+      );
+      if (match) {
+        const weightValue = parseFloat(match[1]);
+        const weightUnit = match[2].toLowerCase();
+
+        if (
+          weightUnit === "gm" ||
+          weightUnit === "grams" ||
+          weightUnit === "gram"
+        ) {
+          weightInKg = weightValue / 1000; // Convert grams to kilograms
+        } else if (
+          weightUnit === "kg" ||
+          weightUnit === "kilograms" ||
+          weightUnit === "kilogram"
+        ) {
+          weightInKg = weightValue; // Already in kilograms
+        }
+      }
+
+      totalWeight += weightInKg * item.quantity;
     });
+
     totalMRP = totalMRP.toFixed(2);
     setSubTotal(parseFloat(totalMRP)); // Ensure subTotal is a number
     setSubWeight(totalWeight);
@@ -49,61 +78,13 @@ function OrderBooking() {
     getCartItems();
   }, [order]);
 
+  useEffect(() => {
+    calcluateDeliveryCharge();
+  }, [selectedAddressId]);
   const fetchCartItems = async () => {
     const res = await fetch(`${baseurl}api/cart/${custId}`);
     const data = await res.json();
     return data;
-  };
-
-  const increaseQuantity = async (itemId) => {
-    try {
-      const updatedCart = cartItems.map((item) => {
-        if (item.id === itemId) {
-          const updatedItem = { ...item, quantity: item.quantity + 1 };
-          updateCartItemQuantity(updatedItem);
-          return updatedItem;
-        }
-        return item;
-      });
-
-      setCartItems(updatedCart);
-    } catch (error) {
-      console.error("Error increasing quantity:", error);
-    }
-  };
-
-  const decreaseQuantity = async (itemId) => {
-    try {
-      const updatedCart = cartItems.map((item) => {
-        if (item.id === itemId && item.quantity > 1) {
-          const updatedItem = { ...item, quantity: item.quantity - 1 };
-          updateCartItemQuantity(updatedItem);
-          return updatedItem;
-        }
-        return item;
-      });
-
-      setCartItems(updatedCart);
-    } catch (error) {
-      console.error("Error decreasing quantity:", error);
-    }
-  };
-
-  const updateCartItemQuantity = async (updatedItem) => {
-    try {
-      await fetch(
-        `${baseurl}updateQuantity/?prodId=${updatedItem.id}&custId=${custId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ quantity: updatedItem.quantity }),
-        }
-      );
-    } catch (error) {
-      console.error("Error updating quantity in the backend:", error);
-    }
   };
 
   const handleCheckout = async () => {
@@ -131,7 +112,7 @@ function OrderBooking() {
         });
         const data = await response.json();
 
-        console.log(data.paymentUrl);
+        // console.log(data.paymentUrl);
       } catch (error) {
         console.error("Error during checkout:", error);
         toast.error("Error during checkout", {
@@ -140,6 +121,14 @@ function OrderBooking() {
       }
     } else if (paymentMethod === "cod") {
       try {
+        setLoading(true); // Set loading to true before making the API call
+
+        let usedCoupon = null; // Initialize usedCoupon variable
+
+        if (discountPrice !== 0) {
+          usedCoupon = couponCode; // Assign couponCode to usedCoupon if discountPrice is not 0
+        }
+
         const response = await fetch(`${baseurl}codOrder`, {
           method: "POST",
           headers: {
@@ -149,8 +138,10 @@ function OrderBooking() {
             custId,
             addressId: selectedAddressId,
             cartItems,
+            usedCoupon, // Pass usedCoupon in the request body
           }),
         });
+
         const data = await response.json();
 
         if (response.ok) {
@@ -168,7 +159,21 @@ function OrderBooking() {
         toast.error("Error during checkout", {
           position: toast.POSITION.TOP_RIGHT,
         });
+      } finally {
+        setLoading(false); // Set loading to false after API call completes (success or error)
       }
+    }
+  };
+
+  const calcluateDeliveryCharge = async () => {
+    try {
+      const result = await fetch(
+        `${baseurl}calcTariff?addressId=${selectedAddressId}&subWeight=${subWeight}`
+      );
+      const data = await result.json();
+      setDeliveryCharge(data.deliveryCharge);
+    } catch (error) {
+      console.error(error.message);
     }
   };
 
@@ -195,13 +200,16 @@ function OrderBooking() {
         body: JSON.stringify({
           couponCode,
           purchaseValue: subTotal,
+          custId,
         }),
       });
       const data = await response.json();
       if (response.ok) {
         let temp = subTotal * (data.discount / 100);
+        console.log(temp);
         setDiscountPrice(temp);
         setSubTotal(subTotal - temp);
+        setDeliveryCharge(0);
       } else {
         toast.error(data.message, {
           position: toast.POSITION.TOP_RIGHT,
@@ -233,6 +241,16 @@ function OrderBooking() {
 
   return (
     <>
+      {loading && (
+        <CircularProgress
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+      )}
       <ToastContainer />
       <Topofferbar />
       <Topnavbar />
@@ -318,6 +336,7 @@ function OrderBooking() {
                     />
                     <button
                       onClick={handleApplyCoupon}
+                      disabled={discountPrice !== 0}
                       className="bg-green-800 text-white py-2 px-4 rounded w-full"
                     >
                       Apply Coupon
@@ -339,29 +358,29 @@ function OrderBooking() {
               {cartItems.map((item) => (
                 <div key={item.id} className="flex justify-between mb-2">
                   <p>
-                    {item.name} ({item.quantity})
+                    {item.product_name} ({item.quantity})
                   </p>
-                  <p>${(parseFloat(item.mrp) * item.quantity).toFixed(2)}</p>
+                  <p>₹{(parseFloat(item.mrp) * item.quantity).toFixed(2)}</p>
                 </div>
               ))}
             </div>
             <div className="flex justify-between mb-2">
               <p>Subtotal</p>
-              <p>${subTotal.toFixed(2)}</p>
+              <p>₹{subTotal.toFixed(2)}</p>
             </div>
             {discountPrice > 0 && (
               <div className="flex justify-between mb-2">
                 <p>Discount</p>
-                <p>-${discountPrice.toFixed(2)}</p>
+                <p>-₹{discountPrice.toFixed(2)}</p>
               </div>
             )}
             <div className="flex justify-between mb-2">
               <p>Delivery Charge</p>
-              <p>${deliveryCharge}</p>
+              <p>₹{deliveryCharge}</p>
             </div>
             <div className="flex justify-between font-bold mb-2">
               <p>Total</p>
-              <p>${(subTotal + deliveryCharge - discountPrice).toFixed(2)}</p>
+              <p>₹{(subTotal + deliveryCharge).toFixed(2)}</p>
             </div>
           </div>
         </div>
