@@ -176,7 +176,7 @@ function ProductCards({ product }) {
                   className="p-2 h-48 object-cover object-right absolute overflow-hidden w-72"
                   src={`${baseurl}uploads/${val.image}`}
                   onClick={() =>
-                    (window.location.href = `#/Productpage/${val.id}`)
+                    (window.location.href = `/Productpage/${val.id}`)
                   }
                 />
                 <Card.Title className="sm: ml-1 font-content pl-2 mt-52">

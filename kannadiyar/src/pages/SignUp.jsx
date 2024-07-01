@@ -89,9 +89,9 @@ const SignUp = () => {
           <div className="flex justify-center items-center">
             {" "}
             <img
-              src="../src/assets/logo.png"
+              src="../src/assets/logo2.png"
               alt="kannadiyar-logo"
-              className="w-32 h-20"
+              className="w-16"
             />{" "}
           </div>
           <div className="flex flex-col  items-center py-4 space-y-4">
@@ -149,7 +149,7 @@ const SignUp = () => {
                     </button>
                   </div>
                 </form>
-                <a className=" text-blue-600 underline text-sm" href="#/FGP">
+                <a className=" text-blue-600 underline text-sm" href="/FGP">
                   Forget Password
                 </a>
               </>

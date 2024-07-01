@@ -66,7 +66,7 @@ export default function Topnavbar() {
       }
       const data = await response.json();
       sessionStorage.setItem("result", JSON.stringify(data));
-      window.location.href = "/#/result";
+      window.location.href = "/result";
     } catch (error) {
       console.error("Error fetching product:", error);
     }
@@ -147,7 +147,7 @@ export default function Topnavbar() {
           <img
             src={logo}
             alt="kannadiyar-logo"
-            className="lg:ml-72 ml-2 mt-2 mr-1 lg:mr-28 w-28 h-16"
+            className="lg:ml-72 ml-2 mt-2 mr-1 lg:mr-28 w-12"
           />
         </a>
         <Form
@@ -257,13 +257,13 @@ export default function Topnavbar() {
               ))}
               <li className="lg:space-y-0 space-y-4 lg:hidden">
                 <div className="text-letter cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("#/MyAccount")}>My Account</h1>
+                  <h1 onClick={() => navigate("/MyAccount")}>My Account</h1>
                 </div>
                 <div className="text-letter cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("#/Wishlist")}>Wishlist</h1>
+                  <h1 onClick={() => navigate("/Wishlist")}>Wishlist</h1>
                 </div>
                 <div className="text-letter cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("#/booking")}>Cart</h1>
+                  <h1 onClick={() => navigate("/booking")}>Cart</h1>
                 </div>
               </li>
             </ul>
