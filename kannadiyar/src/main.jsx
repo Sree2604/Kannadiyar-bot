@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider, createHashRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 
 // Import pages/components
@@ -27,22 +27,22 @@ import Guest from "./components/Guest";
 import EmailSender from "./components/EmailSender";
 
 // Define routes
-const router = createHashRouter([
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Guest />,
+  },
   {
     path: "/signup",
     element: <SignUp />,
   },
   {
-    path: "/Products",
+    path: "/products",
     element: <Products />,
   },
   {
     path: "/about",
     element: <About />,
-  },
-  {
-    path: "/test",
-    element: <EmailSender />,
   },
   {
     path: "/contact",
@@ -73,15 +73,6 @@ const router = createHashRouter([
     element: <Wishlist />,
   },
   {
-    path: "/:custId",
-    element: <Home />,
-  },
-
-  {
-    path: "/",
-    element: <Guest />,
-  },
-  {
     path: "/booking",
     element: <OrderBooking />,
   },
@@ -106,8 +97,16 @@ const router = createHashRouter([
     element: <ForgetPassword />,
   },
   {
+    path: "/email",
+    element: <EmailSender />,
+  },
+  {
     path: "/test",
     element: <Test />,
+  },
+  {
+    path: "/:custId",
+    element: <Home />,
   },
   {
     path: "*",
