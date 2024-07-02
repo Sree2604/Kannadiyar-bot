@@ -208,7 +208,6 @@ function OrderBooking() {
         let temp = subTotal * (data.discount / 100);
         console.log(temp);
         setDiscountPrice(temp);
-        setSubTotal(subTotal - temp);
         setDeliveryCharge(0);
       } else {
         toast.error(data.message, {
