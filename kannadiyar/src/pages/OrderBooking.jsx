@@ -399,7 +399,7 @@ function OrderBooking() {
             </div>
             <div className="flex justify-between mb-2">
               <p>Subtotal</p>
-              <p>₹{subTotal.toFixed(2)}</p>
+              <p>₹{subTotal.toFixed(2) - discountPrice.toFixed(2)}</p>
             </div>
             {discountPrice > 0 && (
               <div className="flex justify-between mb-2">
