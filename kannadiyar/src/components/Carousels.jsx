@@ -48,62 +48,27 @@ const Carousels = () => {
   }, []);
 
   return (
-    <div className="flex sm:ml-4">
-      {/* Carousel on the left */}
-      <div className="sm:mt-2  sm:w-1/2 w-screen md:mt-10 lg:mt-2  lg:w-2/3 lg:overflow-hidden-carousel">
-        {/* <img
-          className="lg:w-full w-full sm:w-20 h-64 sm:h-10 lg:h-[526px]  transition-transform duration-300 transform rounded-md"
-          src={photo1}
-          alt={`Poster-1`}
-          onClick={() =>
-            navigate(`/Productpage/${posters1[currentIndex]?.pid}`)
-          }
-        /> */}
-        <Carousel>
-          <Carousel.Item>
-            <img src={photo1} text="First slide" />
-            <Carousel.Caption>
-              <h3>First slide label</h3>
-            </Carousel.Caption>
-          </Carousel.Item>
-          <Carousel.Item>
-            <img src={photo4} text="Second slide" />
-            <Carousel.Caption>
-              <h3>Second slide label</h3>
-            </Carousel.Caption>
-          </Carousel.Item>
-          <Carousel.Item>
-            <img src={photo5} text="Third slide" />
-            <Carousel.Caption>
-              <h3>Third slide label</h3>
-            </Carousel.Caption>
-          </Carousel.Item>
-        </Carousel>
-      </div>
-
-      {/* Posters on the right */}
-      {/* <div className="">
-      <div className="hidden lg:grid"> */}
-      <div className="sm:ml-4 hidden lg:block lg:w-1/3 lg:p-4 lg:-mt-2">
-        <div className="sm:w-16 sm:ml-2 md:ml-6 md:w-48 lg:w-full lg:mb-4">
-          <img
-            className="w-full mb-2 rounded-md h-32 lg:h-[17rem]"
-            src={photo2}
-            alt={`Poster 2`}
-            onClick={() => navigate(`/Productpage/${posters2.pid}`)}
-          />
-        </div>
-        <div className="sm:w-16 sm:ml-2 md:ml-6 md:w-48 lg:w-full lg:mb-4">
-          <img
-            className="lg:w-full sm:w-16  rounded-md h-32 lg:h-[17rem]"
-            src={photo3}
-            alt={`Poster 3`}
-            onClick={() => navigate(`/Productpage/${posters3.pid}`)}
-          />
-        </div>
-      </div>
-      {/* </div>
-      </div> */}
+    <div className="w-full flex">
+      <Carousel>
+        <Carousel.Item>
+          <img src={photo1} text="First slide" />
+          <Carousel.Caption>
+            <h3>First slide label</h3>
+          </Carousel.Caption>
+        </Carousel.Item>
+        <Carousel.Item>
+          <img src={photo4} text="Second slide" />
+          <Carousel.Caption>
+            <h3>Second slide label</h3>
+          </Carousel.Caption>
+        </Carousel.Item>
+        <Carousel.Item>
+          <img src={photo5} text="Third slide" />
+          <Carousel.Caption>
+            <h3>Third slide label</h3>
+          </Carousel.Caption>
+        </Carousel.Item>
+      </Carousel>
     </div>
   );
 };

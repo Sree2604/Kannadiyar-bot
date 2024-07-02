@@ -302,7 +302,7 @@ function OrderBooking() {
                   </div>
                   <div className="flex justify-between items-center">
                     <button
-                      className="bg-white text-green-800 py-2 px-4 rounded hover:scale-110"
+                      className="bg-white text-green-800 py-2 px-4 rounded hover:scale-105"
                       onClick={() => {
                         if (selectedAddressId) {
                           setGetAddress(true);
@@ -347,8 +347,8 @@ function OrderBooking() {
                   <p className="text-lg font-semibold">
                     Payment Method: {paymentMethod}
                   </p>
-                  <p className="text-base font-medium">
-                    we'll Contact soon to confirm your booking
+                  <p className="text-base">
+                    (we'll Contact soon to confirm your booking)
                   </p>
                 </div>
               )}
@@ -410,7 +410,13 @@ function OrderBooking() {
             )}
             <div className="flex justify-between mb-2">
               <p>Delivery Charge</p>
-              <p>₹{deliveryCharge}</p>
+              {deliveryCharge == 0 ? (
+                <p>
+                  free <span className="line-through">₹{deliveryCharge}</span>
+                </p>
+              ) : (
+                <p>₹{deliveryCharge}</p>
+              )}
             </div>
             <div className="flex justify-between font-bold mb-2">
               <p>Total</p>

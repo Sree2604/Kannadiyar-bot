@@ -121,7 +121,7 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
   return (
     <div className="flex flex-col items-center">
       {addresses.length === 0 ? (
-        <Addressmodel addressDetail={addAddress} />
+        <div>No address available</div>
       ) : (
         <>
           {addresses.map((address) => (
