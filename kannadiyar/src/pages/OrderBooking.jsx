@@ -306,6 +306,11 @@ function OrderBooking() {
                         if (selectedAddressId) {
                           setGetAddress(true);
                         }
+                        else{
+                          toast.error("Please select any one of the address", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+                        }
                       }}
                     >
                       Use this address
@@ -399,7 +404,7 @@ function OrderBooking() {
             </div>
             <div className="flex justify-between mb-2">
               <p>Subtotal</p>
-              <p>₹{subTotal.toFixed(2) - discountPrice.toFixed(2)}</p>
+              <p>₹{subTotal.toFixed(2)}</p>
             </div>
             {discountPrice > 0 && (
               <div className="flex justify-between mb-2">
@@ -413,7 +418,7 @@ function OrderBooking() {
             </div>
             <div className="flex justify-between font-bold mb-2">
               <p>Total</p>
-              <p>₹{(subTotal + deliveryCharge).toFixed(2)}</p>
+              <p>₹{(subTotal + deliveryCharge - discountPrice).toFixed(2)}</p>
             </div>
           </div>
         </div>
