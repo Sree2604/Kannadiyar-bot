@@ -208,7 +208,6 @@ function OrderBooking() {
         let temp = subTotal * (data.discount / 100);
         console.log(temp);
         setDiscountPrice(temp);
-        setSubTotal(subTotal - temp);
         setDeliveryCharge(0);
       } else {
         toast.error(data.message, {
@@ -306,6 +305,11 @@ function OrderBooking() {
                       onClick={() => {
                         if (selectedAddressId) {
                           setGetAddress(true);
+                        }
+                        else{
+                          toast.error("Please select any one of the address", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
                         }
                       }}
                     >
@@ -420,7 +424,7 @@ function OrderBooking() {
             </div>
             <div className="flex justify-between font-bold mb-2">
               <p>Total</p>
-              <p>₹{(subTotal + deliveryCharge).toFixed(2)}</p>
+              <p>₹{(subTotal + deliveryCharge - discountPrice).toFixed(2)}</p>
             </div>
           </div>
         </div>
