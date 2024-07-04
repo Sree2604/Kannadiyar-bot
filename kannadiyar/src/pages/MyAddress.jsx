@@ -7,6 +7,7 @@ import Topofferbar from "../components/Topofferbar";
 import GreenThing from "../components/GreenThing";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import Share from "../components/Share";
 
 
 function MyAddress() {
@@ -38,6 +39,7 @@ function MyAddress() {
         </div>
       </div>
       <Footer />
+      <Share/>
     </>
   );
 }

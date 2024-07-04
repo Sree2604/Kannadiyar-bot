@@ -4,6 +4,7 @@ import Topofferbar from "../components/Topofferbar";
 import Footer from "../components/Footer";
 import Halmark from "../components/Halmark";
 import GreenThing from "../components/GreenThing";
+import Share from "../components/Share";
 
 function About() {
   return (
@@ -141,6 +142,7 @@ function About() {
       </div>
       <Halmark />
       <Footer />
+      <Share/>
     </>
   );
 }

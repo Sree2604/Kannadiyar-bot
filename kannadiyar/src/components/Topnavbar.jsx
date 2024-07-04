@@ -278,13 +278,13 @@ export default function Topnavbar() {
                 </li>
               ))}
               <li className="lg:space-y-0 space-y-4">
-                <div className="text-letter cursor-pointer lg:hidden">
+                <div className="text-primecolor cursor-pointer lg:hidden">
                   <h1 onClick={() => navigate("/MyAccount")}>My Account</h1>
                 </div>
-                <div className="text-letter cursor-pointer lg:hidden">
+                <div className="text-primecolor cursor-pointer lg:hidden">
                   <h1 onClick={() => navigate("/Wishlist")}>Wishlist</h1>
                 </div>
-                <div className="text-letter cursor-pointer lg:hidden">
+                <div className="text-primecolor cursor-pointer lg:hidden">
                   <h1 onClick={() => navigate("/booking")}>Cart</h1>
                 </div>
               </li>
