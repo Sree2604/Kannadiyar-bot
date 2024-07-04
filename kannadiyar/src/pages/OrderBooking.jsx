@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+import Share from "../components/Share";
 
 function OrderBooking() {
   const custId = sessionStorage.getItem("custId");
@@ -430,6 +431,7 @@ function OrderBooking() {
         </div>
       </div>
       <Footer />
+      <Share/>
     </>
   );
 }

@@ -52,16 +52,16 @@ function Home() {
   };
   return (
     <>
-      <div className="overflow-x-hidden">
+      <div className="">
         {tokenExist && (
           <>
             <Topofferbar />
 
             <Topnavbar />
-            <div className="lg:w-10/12 lg:mt-5 ml-0 mt-2 lg:ml-32">
+            <div>
               <Carousels />
             </div>
-            <h1 className="sm:mt-6 sm: font-content  sm: ml-3 lg:mt-5 lg:text-2xl sm:text-lg lg:font-semibold lg:ml-44 text-primecolor">
+            <h1 className="sm:mt-10 sm:font-content  sm: ml-3 lg:mt-5 lg:text-2xl sm:text-lg lg:font-semibold lg:ml-44 text-primecolor">
               Shop by Category
             </h1>
 

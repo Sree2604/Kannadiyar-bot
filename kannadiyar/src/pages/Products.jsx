@@ -6,6 +6,7 @@ import ListComponents from "../components/ListComponents";
 import Halmark from "../components/Halmark";
 import GreenThing from "../components/GreenThing";
 import Topofferbar from "../components/Topofferbar";
+import Share from "../components/Share";
 function Products() {
   return (
     <>
@@ -30,6 +31,7 @@ function Products() {
         <Halmark />
       </div>
       <Footer />
+      <Share/>
     </>
   );
 }

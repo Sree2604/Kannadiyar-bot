@@ -223,16 +223,18 @@ export default function Topnavbar() {
           </div>
         </div>
       </div>
-      <div className="flex lg:container lg:mx-auto lg:flex justify-around">
+      <div className="flex-row lg:container lg:mx-auto lg:flex justify-around ">
+        <div className="flex flex-row">
         <CategoryButton />
         <button
           onClick={toggleMenu}
-          className="text-primecolor focus:outline-none text-2xl lg:hidden"
+          className="text-primecolor focus:outline-none text-2xl lg:hidden ml-24 "
         >
           ☰
         </button>
+        </div>
         <div
-          className={`lg:flex lg:items-center lg:w-auto ${
+          className={`lg:flex   lg:items-center lg:w-auto ${
             isMenuOpen ? "block" : "hidden"
           }`}
         >
@@ -278,13 +280,13 @@ export default function Topnavbar() {
                 </li>
               ))}
               <li className="lg:space-y-0 space-y-4">
-                <div className="text-letter cursor-pointer lg:hidden">
+                <div className="text-primecolor cursor-pointer lg:hidden">
                   <h1 onClick={() => navigate("/MyAccount")}>My Account</h1>
                 </div>
-                <div className="text-letter cursor-pointer lg:hidden">
+                <div className="text-primecolor cursor-pointer lg:hidden">
                   <h1 onClick={() => navigate("/Wishlist")}>Wishlist</h1>
                 </div>
-                <div className="text-letter cursor-pointer lg:hidden">
+                <div className="text-primecolor cursor-pointer lg:hidden">
                   <h1 onClick={() => navigate("/booking")}>Cart</h1>
                 </div>
               </li>
