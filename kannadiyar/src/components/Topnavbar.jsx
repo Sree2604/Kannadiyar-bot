@@ -194,7 +194,7 @@ export default function Topnavbar() {
           <div className="flex flex-col ml-1 lg:ml-28">
             <button
               className="text-sm lg:text-lg bg-orange-100 text-primecolor hover:bg-primecolor font-content lg:font-semibold px-4 py-2 rounded-lg ml-4 mt-1 hover:text-orange-100 cursor-pointer"
-              onClick={() => navigate("#/signup")}
+              onClick={() => navigate("/signup")}
             >
               Login
             </button>
