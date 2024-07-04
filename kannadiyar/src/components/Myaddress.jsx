@@ -11,16 +11,16 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
   useEffect(() => {
     const fetchAddressesFromServer = async () => {
       try {
-        const addressesFromServer = await fetchAddresses();
+        const addressesFromServer = await fetchAddresses(custId);
         setAddresses(addressesFromServer);
       } catch (error) {
         console.error("Error fetching addresses:", error);
       }
     };
     fetchAddressesFromServer();
-  }, [baseurl, custId]);
+  }, [custId]);
 
-  const fetchAddresses = async () => {
+  const fetchAddresses = async (custId) => {
     const res = await fetch(`${baseurl}getAddress/?custId=${custId}`);
     if (!res.ok) throw new Error("Failed to fetch addresses");
     const data = await res.json();
@@ -31,9 +31,7 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
     try {
       const res = await fetch(`${baseurl}editAddress/?addressId=${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(address),
       });
       if (!res.ok) throw new Error("Failed to update address");
@@ -60,9 +58,7 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
     try {
       const res = await fetch(`${baseurl}addAddress/?custId=${custId}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(address),
       });
       if (!res.ok) throw new Error("Failed to add address");
@@ -93,7 +89,7 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
     isSelected,
   }) => {
     return (
-      <div className="border rounded-lg p-4 mb-4 w-full max-w-sm">
+      <div className="border rounded-lg p-2 mb-3 w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold">{name}</h1>
           <input
@@ -105,19 +101,16 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
           />
         </div>
         <div className="flex items-center mt-2">
-          <ion-icon name="call-outline" className="text-2xl mr-2"></ion-icon>
+          <ion-icon name="call-outline" className="text-2xl"></ion-icon>
           <span>{phone}</span>
         </div>
         <div className="flex items-center mt-2">
-          <ion-icon
-            name="location-outline"
-            className="text-2xl mr-2"
-          ></ion-icon>
+          <ion-icon name="location-outline" className="text-2xl"></ion-icon>
           <span>{location}</span>
         </div>
         <div className="flex justify-end mt-4">
           <EditAddressmodel addressDetail={updateAddress} oldAddress={onEdit} />
-          <button className="ml-4 text-red-500" onClick={() => onDelete(id)}>
+          <button className=" text-red-500" onClick={() => onDelete(id)}>
             <ion-icon name="trash-outline" className="text-2xl"></ion-icon>
           </button>
         </div>
@@ -128,7 +121,7 @@ function MyAddress({ deliveryAddress, onAddressSelect }) {
   return (
     <div className="flex flex-col items-center">
       {addresses.length === 0 ? (
-        <Addressmodel addressDetail={addAddress} />
+        <div>No address available</div>
       ) : (
         <>
           {addresses.map((address) => (

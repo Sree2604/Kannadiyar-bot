@@ -9,7 +9,7 @@ const Card = ({ details, color }) => {
     <div className="flex-shrink-0 w-64 p-4 m-8  text-center font-semibold text-sm rounded-lg">
       <div
         className={color + " p-4 rounded-md cursor-pointer"}
-        onClick={() => navigate(`#/categoryResult/${details.category}/null`)}
+        onClick={() => navigate(`/categoryResult/${details.category}/null`)}
       >
         <img
           className="rounded-full w-64 h-40 p-2 "

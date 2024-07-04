@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useState} from "react";
 import GreenThing from "../components/GreenThing";
 import ReivewForm from "../components/ReviewForm";
+import Share from "../components/Share";
 
 const Reviews = () => {
   const [reviews, setReviews] = useState([
@@ -128,6 +129,7 @@ const Reviews = () => {
     <GreenThing header={"Review Page"} />
    <ReivewForm/>
     <Footer/>
+    <Share/>
     </>
   );
 };

@@ -7,6 +7,7 @@ import GreenThing from "../components/GreenThing";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Orderitem from "../components/OrderItems";
+import Share from "../components/Share";
 
 function MyOrders() {
   const token = sessionStorage.getItem("token");
@@ -37,6 +38,7 @@ function MyOrders() {
         </div>
       </div>
       <Footer/>
+      <Share/>
     </>
   );
 }

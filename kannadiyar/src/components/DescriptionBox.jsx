@@ -37,7 +37,7 @@ const BoxWithHeadings = ({ productData }) => {
           </button>
         ))}
       </div>
-      <p className="lg:mt-16 font-content lg:text-2xl">{descriptions[activeHeading - 1]}</p>
+      <p className="lg:mt-16 font-content lg:text-md">{descriptions[activeHeading - 1]}</p>
     </div>
   );
 };

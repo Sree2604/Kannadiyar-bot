@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Topnavbar from "../components/Topnavbar";
 import Footer from "../components/Footer";
 import Contactbox from "../components/Contactbox";
+import Share from "../components/Share";
 
 function Contact() {
   return (
@@ -54,6 +55,7 @@ function Contact() {
         </div>
       </div>
       <Footer />
+      <Share/>
     </>
   );
 }

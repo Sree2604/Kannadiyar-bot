@@ -153,7 +153,7 @@ function ProductProCards({ product }) {
                     <Card.Img
                       className="p-2 h-48 object-cover object-right absolute overflow-hidden w-72"
                       src={`${baseurl}uploads/${val.image}`}
-                      onClick={() => window.open(`#/Productpage/${val.id}`)}
+                      onClick={() => window.open(`/Productpage/${val.id}`)}
                     ></Card.Img>
                   </div>
                   <Card.Title className="font-content pl-2 mt-52">

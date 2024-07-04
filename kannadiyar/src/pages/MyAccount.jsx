@@ -5,6 +5,7 @@ import Forms from "../components/Forms";
 import Footer from "../components/Footer";
 import GreenThing from "../components/GreenThing";
 import { useEffect, useState } from "react";
+import Share from "../components/Share";
 
 function MyAccount() {
   const baseurl = import.meta.env.VITE_API_URL;
@@ -60,6 +61,7 @@ function MyAccount() {
       </div>
 
       <Footer />
+      <Share/>
     </>
   );
 }

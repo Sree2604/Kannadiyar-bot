@@ -45,7 +45,7 @@ const CategoryButton = () => {
     <div className="flex justify-center items-center">
       <Dropdown
         title="⇄ All Categories"
-        className="font-content font-semibold rounded-md relative p-2 border mt-4 mb-2 lg:ml-64 ml-24 bg-orange-100 text-primecolor hover:bg-primecolor hover:text-orange-100"
+        className="font-content font-semibold rounded-md relative p-2 border mt-2 mb-2 lg:ml-64 ml-24 bg-orange-100 text-primecolor hover:bg-primecolor hover:text-orange-100"
       >
         {categories.map((category) => (
           <Dropdown.Item

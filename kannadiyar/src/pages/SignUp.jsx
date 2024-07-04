@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import logo2 from "../assets/logo2.png";
 
 const SignUp = () => {
   const [state, setState] = useState("Login");
@@ -88,11 +89,7 @@ const SignUp = () => {
         <div className="bg-orange-100 font-content p-6 rounded-lg shadow-lg">
           <div className="flex justify-center items-center">
             {" "}
-            <img
-              src="../src/assets/logo.png"
-              alt="kannadiyar-logo"
-              className="w-32 h-20"
-            />{" "}
+            <img src={logo2} alt="kannadiyar-logo" className="w-16" />{" "}
           </div>
           <div className="flex flex-col  items-center py-4 space-y-4">
             <div className="flex">
@@ -149,7 +146,7 @@ const SignUp = () => {
                     </button>
                   </div>
                 </form>
-                <a className=" text-blue-600 underline text-sm" href="#/FGP">
+                <a className=" text-blue-600 underline text-sm" href="/FGP">
                   Forget Password
                 </a>
               </>

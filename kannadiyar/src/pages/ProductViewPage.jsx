@@ -7,6 +7,7 @@ import ProductImage from "../components/ProductImage";
 import DescriptionBox from "../components/DescriptionBox";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Share from "../components/Share";
 
 function ProductViewPage() {
   const [product, setProduct] = useState([]);
@@ -74,6 +75,7 @@ function ProductViewPage() {
           <ProductCards product={productData} />
         </div>
         <Footer />
+        <Share/>
       </div>
     </>
   );

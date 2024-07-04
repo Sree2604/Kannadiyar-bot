@@ -6,6 +6,7 @@ import ListComponents from "../components/ListComponents";
 import Halmark from "../components/Halmark";
 import GreenThing from "../components/GreenThing";
 import { useParams, useNavigate } from "react-router-dom";
+import Share from "../components/Share";
 
 function CategoryResult() {
   const [productData, setProductData] = useState([]);
@@ -52,6 +53,7 @@ function CategoryResult() {
         <Halmark />
       </div>
       <Footer />
+      <Share/>
     </>
   );
 }

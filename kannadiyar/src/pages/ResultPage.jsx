@@ -5,6 +5,7 @@ import ProductProCards from "../components/ProductProCards";
 import ListComponents from "../components/ListComponents";
 import Halmark from "../components/Halmark";
 import GreenThing from "../components/GreenThing";
+import Share from "../components/Share";
 
 function ResultPage() {
   const [productData, setProductData] = useState([]);
@@ -45,6 +46,7 @@ function ResultPage() {
         <Halmark />
       </div>
       <Footer />
+      <Share/>
     </>
   );
 }

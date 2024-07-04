@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+import Share from "../components/Share";
 
 function OrderBooking() {
   const custId = sessionStorage.getItem("custId");
@@ -208,7 +209,6 @@ function OrderBooking() {
         let temp = subTotal * (data.discount / 100);
         console.log(temp);
         setDiscountPrice(temp);
-        setSubTotal(subTotal - temp);
         setDeliveryCharge(0);
       } else {
         toast.error(data.message, {
@@ -255,104 +255,9 @@ function OrderBooking() {
       <Topofferbar />
       <Topnavbar />
       <div className="flex flex-col justify-center items-center">
-        <h2 className="text-2xl font-bold">Checkout</h2>
-        <div className="w-full flex">
-          <div className="w-4/6 m-3 flex flex-col gap-8">
-            <div className="bg-[#638759] rounded-lg shadow-lg p-4 w-full flex flex-col gap-3">
-              <h3 className="text-lg font-semibold text-white">
-                1. Select a Delivery Address
-              </h3>
-              {!getAddress && (
-                <>
-                  <div className="bg-white rounded-lg p-4">
-                    <Myaddress
-                      onAddressSelect={(id) => setSelectedAddressId(id)}
-                    />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <button
-                      className="bg-white text-green-800 py-2 px-4 rounded hover:scale-110"
-                      onClick={() => {
-                        if (selectedAddressId) {
-                          setGetAddress(true);
-                        }
-                      }}
-                    >
-                      Use this address
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="flex flex-col bg-[#638759] rounded-lg shadow-lg p-4 w-full gap-3">
-              <h3 className="text-lg font-semibold text-white">
-                2. Select a Payment Method
-              </h3>
-              {getAddress && !showPaymentMethod && (
-                <div className="bg-white rounded-lg p-4">
-                  <button
-                    className="bg-green-800 text-white py-2 px-4 rounded m-2"
-                    onClick={() => {
-                      setPaymentMethod("payNow");
-                      setShowPaymentMethod(true);
-                    }}
-                  >
-                    Pay Now
-                  </button>
-                  <button
-                    className="bg-green-800 text-white py-2 px-4 rounded m-2"
-                    onClick={() => {
-                      setPaymentMethod("cod");
-                      setShowPaymentMethod(true);
-                    }}
-                  >
-                    Cash on Delivery
-                  </button>
-                </div>
-              )}
-              {showPaymentMethod && (
-                <div className="bg-white rounded-lg p-4">
-                  <p className="text-lg font-semibold">
-                    Payment Method: {paymentMethod}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {showPaymentMethod && (
-              <div className="bg-[#638759] rounded-lg shadow-lg p-4 w-full">
-                <h3 className="text-lg font-semibold text-white">
-                  3. Apply Coupon and Place Order
-                </h3>
-                <div className="bg-white rounded-lg p-4">
-                  <div className="mb-4">
-                    <input
-                      type="text"
-                      placeholder="Coupon Code"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      className="border rounded py-2 px-3 mb-2 w-full"
-                    />
-                    <button
-                      onClick={handleApplyCoupon}
-                      disabled={discountPrice !== 0}
-                      className="bg-green-800 text-white py-2 px-4 rounded w-full"
-                    >
-                      Apply Coupon
-                    </button>
-                  </div>
-                  <button
-                    onClick={handleCheckout}
-                    className="bg-green-800 text-white py-2 px-4 rounded w-full"
-                  >
-                    Place Order
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="w-2/6 m-3 bg-white shadow-lg p-4 rounded-lg h-96">
+        <h2 className="text-xl font-bold">Checkout</h2>
+        <div className="w-4/5 flex flex-col sm:flex-row">
+          <div className=" m-2 bg-white shadow-lg p-2 rounded-lg h-96 sm:hidden">
             <h3 className="text-xl font-bold mb-4">Order Summary</h3>
             <div className="mb-4">
               {cartItems.map((item) => (
@@ -383,9 +288,150 @@ function OrderBooking() {
               <p>₹{(subTotal + deliveryCharge).toFixed(2)}</p>
             </div>
           </div>
+          <div className="w-full sm:w-4/6 m-2 flex flex-col gap-8">
+            <div className="bg-primecolor rounded-lg shadow-lg p-2 w-full flex flex-col gap-3">
+              <h3 className="text-lg font-semibold text-white">
+                1. Select a Delivery Address
+              </h3>
+              {!getAddress && (
+                <>
+                  <div className="bg-white rounded-lg p-4">
+                    <Myaddress
+                      onAddressSelect={(id) => setSelectedAddressId(id)}
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <button
+                      className="bg-white text-green-800 py-2 px-4 rounded hover:scale-105"
+                      onClick={() => {
+                        if (selectedAddressId) {
+                          setGetAddress(true);
+                        }
+                        else{
+                          toast.error("Please select any one of the address", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+                        }
+                      }}
+                    >
+                      Use this address
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="flex flex-col bg-primecolor rounded-lg shadow-lg p-2 w-full gap-3">
+              <h3 className="text-lg font-semibold text-white">
+                2. Select a Payment Method
+              </h3>
+              {getAddress && !showPaymentMethod && (
+                <div className="bg-white rounded-lg p-4">
+                  <button
+                    className="bg-green-800 text-white py-2 px-4 rounded m-2"
+                    onClick={() => {
+                      setPaymentMethod("payNow");
+                      setShowPaymentMethod(true);
+                    }}
+                  >
+                    Pay Now
+                  </button>
+                  <button
+                    className="bg-green-800 text-white py-2 px-4 rounded m-2"
+                    onClick={() => {
+                      setPaymentMethod("cod");
+                      setShowPaymentMethod(true);
+                    }}
+                  >
+                    Cash on Delivery
+                  </button>
+                </div>
+              )}
+
+              {showPaymentMethod && (
+                <div className="bg-white rounded-lg p-2">
+                  <p className="text-lg font-semibold">
+                    Payment Method: {paymentMethod}
+                  </p>
+                  <p className="text-base">
+                    (we'll Contact soon to confirm your booking)
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {showPaymentMethod && (
+              <div className="bg-primecolor rounded-lg shadow-lg p-2 w-full">
+                <h3 className="text-lg font-semibold text-white">
+                  3. Apply Coupon and Place Order
+                </h3>
+                <div className="bg-white rounded-lg p-2">
+                  <div className="mb-4">
+                    <input
+                      type="text"
+                      placeholder="Coupon Code"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      className="border rounded py-2 px-3 mb-2 w-full"
+                    />
+                    <button
+                      onClick={handleApplyCoupon}
+                      disabled={discountPrice !== 0}
+                      className="bg-[#ffedd5] text-black py-2 px-4 rounded w-full"
+                    >
+                      Apply Coupon
+                    </button>
+                  </div>
+                  <button
+                    onClick={handleCheckout}
+                    className="bg-[#ffedd5] text-black py-2 px-4 rounded w-full"
+                  >
+                    Place Order
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="w-2/6 m-2 bg-white shadow-lg p-2 rounded-lg h-96 hidden sm:flex sm:flex-col">
+            <h3 className="text-xl font-bold mb-4">Order Summary</h3>
+            <div className="mb-4">
+              {cartItems.map((item) => (
+                <div key={item.id} className="flex justify-between mb-2">
+                  <p>
+                    {item.product_name} ({item.quantity})
+                  </p>
+                  <p>₹{(parseFloat(item.mrp) * item.quantity).toFixed(2)}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between mb-2">
+              <p>Subtotal</p>
+              <p>₹{subTotal.toFixed(2)}</p>
+            </div>
+            {discountPrice > 0 && (
+              <div className="flex justify-between mb-2">
+                <p>Discount</p>
+                <p>-₹{discountPrice.toFixed(2)}</p>
+              </div>
+            )}
+            <div className="flex justify-between mb-2">
+              <p>Delivery Charge</p>
+              {deliveryCharge == 0 ? (
+                <p>
+                  free <span className="line-through">₹{deliveryCharge}</span>
+                </p>
+              ) : (
+                <p>₹{deliveryCharge}</p>
+              )}
+            </div>
+            <div className="flex justify-between font-bold mb-2">
+              <p>Total</p>
+              <p>₹{(subTotal + deliveryCharge - discountPrice).toFixed(2)}</p>
+            </div>
+          </div>
         </div>
       </div>
       <Footer />
+      <Share/>
     </>
   );
 }
