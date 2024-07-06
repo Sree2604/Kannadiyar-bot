@@ -235,13 +235,7 @@ export default function Topnavbar() {
       
       <div className="flex-row lg:container lg:mx-auto lg:flex justify-around ">
         <div className="flex flex-row">
-       
-        {/* <button
-          onClick={toggleMenu}
-          className="text-primecolor focus:outline-none text-2xl lg:hidden ml-24 "
-        >
-          ☰
-        </button> */}
+
         </div>
         <div className="flex items-center justify-between px-4 lg:px-10 lg:py-13 relative w-full ">
           <div className="flex items-center justify-between w-full lg:w-auto">
