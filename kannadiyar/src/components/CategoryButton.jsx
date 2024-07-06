@@ -48,13 +48,13 @@ const CategoryButton = () => {
         className="font-content font-semibold rounded-md relative p-2 border mt-2 mb-2 lg:ml-64 ml-28 bg-orange-100 text-primecolor hover:bg-primecolor hover:text-orange-100"
       >
         {categories.map((category) => (
-          <Dropdown.Item 
+          <Dropdown.Item
             key={category.id}
             onClick={() => handleCategoryClick(category)}
             className="lg:mr-12 lg:gap-2 mr-12 "
           >
             <img
-              src={`http://localhost:4000/categories/${category.image}`}
+              src={`${baseurl}categories/${category.image}`}
               className="rounded-full w-10 h-10"
               alt={category.name}
             />
