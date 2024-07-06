@@ -134,26 +134,26 @@ function ProductContent({ productData }) {
                   </div>
                 </div>
                 <h1 className="lg:pl-10 lg:text-xl lg:pt-6">Available in :</h1>
-                <div className="lg:pl-10 lg:pt-4">
+                <div className="lg:pl-10 lg:pt-4 pt-2">
                   <h2 className="lg:text-lg lg:p-2 font-content font-bold">
                     {product.weight}
                   </h2>
                 </div>
-                <div className="lg:pl-10 lg:pt-6 lg:flex lg:flex-row">
-                  <h1 className="lg:text-3xl sm:text-2xl font-semibold text-red-500">
+                <div className="lg:pl-10 lg:pt-6 flex flex-row">
+                  <h1 className="lg:text-3xl sm:text-2xl pt-3 font-semibold text-red-500">
                     ₹ {product.mrp}
                   </h1>
-                  <h1 className="lg:text-2xl sm:text-xl font-semibold text-gray-400 line-through lg:pl-3 lg:pt-2">
+                  <h1 className="lg:text-2xl sm:text-xl pl-5 pt-3 font-semibold text-gray-400 line-through lg:pl-3 lg:pt-2">
                     ₹ {product.discount_price}
                   </h1>
                 </div>
-
+                
                 <div className="sm: mt-3 lg:flex lg:flex-col lg:ml-10 lg:mt-7 ">
-                  <Counter
+                <Counter
                     increase={() => setQuantity(quantity + 1)}
                     decrease={decreaseQuantity}
                     quantity={quantity}
-                    className="sm: mt-3 lg:mt-5"
+                    className="mt-3 lg:mt-5"
                   />
                   <button
                     className="sm: bg-primecolor sm: p-2 sm: text-white sm: mt-1 hover:opacity-80 rounded-lg lg:w-72 lg:h-14"

@@ -7,13 +7,13 @@ import Generations from '../assets/Third.png'
 function Halmark() {
   return (
     <>
-      <div className=" lg:flex lg:flex-row lg:mt-5 font-content lg:justify-center">
+      <div className=" lg:flex lg:flex-row lg:mt-5 font-content lg:justify-center bg-orange-100">
         {/* Cards 1 */}
-        <Card style={{}} className="sm: mt-3 sm: ml-4 sm: mr-4 sm: bg-red-100 lg:m-auto lg:w-3/12 lg:bg-red-100">
+        <div style={{}} className="sm: mt-3 sm: ml-4 sm: mr-4 sm:  lg:m-auto lg:w-3/12 bg-orange-100">
           <div className="flex ">
             <div>
               <Card.Img
-                className="p-2  w-96 "
+                className="p-2 h-36 w-96 "
                 variant="top"
                 src={Supply}
               />
@@ -28,11 +28,11 @@ function Halmark() {
               </Card.Text>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Cards 1 ends */}
         {/* Cards 1 */}
-        <Card style={{}} className="font-content sm: mt-3 sm: ml-4 sm: mr-4 sm: bg-blue-100 lg:m-auto lg:w-3/12 lg:bg-blue-100">
+        <div style={{}} className="font-content sm: mt-3 sm: ml-4 sm: mr-4 sm:  lg:m-auto lg:w-3/12 bg-orange-100">
           <div className="flex ">
             <div>
               <Card.Img
@@ -52,11 +52,11 @@ function Halmark() {
               </Card.Text>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Cards 1 ends */}
         {/* Cards 1 */}
-        <Card style={{}} className="font-content sm: mt-3 sm: ml-4 sm: mr-4 sm: bg-lime-100 lg:m-auto lg:w-3/12 lg:bg-lime-100">
+        <div className="font-content sm: mt-3 sm: ml-4 sm: mr-4 sm: lg:m-auto lg:w-3/12 bg-orange-100">
           <div className="flex ">
             <div>
               <Card.Img
@@ -76,7 +76,7 @@ function Halmark() {
               </Card.Text>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Cards 1 ends */}
       </div>

@@ -27,14 +27,14 @@ function Share() {
 
   return (
     <div className="fixed bottom-6 right-4 z-50">
-        <div className=" w-10 rounded-lg shadow-lg bg-transparent ring-1 ring-textcolor-0 flex  gap-3 p-2 bottom-0 mr-3  absolute -ml-8  flex-col">
+        <div className=" w-10 rounded-lg shadow-lg bg-primecolor ring-1 ring-textcolor-0 flex  gap-3 p-2 bottom-0 mr-3  absolute -ml-8  flex-col">
           <a href="https://wa.me/8124813376" target="_blank">
-            <FaWhatsapp size={22} className="cursor-pointer hover:scale-125 text-green-800" />
+            <FaWhatsapp size={24} className="cursor-pointer hover:scale-125 text-white" />
           </a>
           <a href="https://www.instagram.com/bhub_2024/" target="_blank">
-            <FaInstagram size={22} className="cursor-pointer hover:scale-125 text-pink-600" />
+            <FaInstagram size={24} className="cursor-pointer hover:scale-125 text-white" />
           </a>
-          <FaYoutube size={22} className="cursor-pointer hover:scale-125 text-red-800" />
+          <FaYoutube size={24} className="cursor-pointer hover:scale-125 text-white" />
           {/* <FiMail
             size={22}
             className="cursor-pointer hover:scale-125"

@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import GreenThing from "../components/GreenThing";
 import { useEffect, useState } from "react";
 import Share from "../components/Share";
+import Halmark from "../components/Halmark";
 
 function MyAccount() {
   const baseurl = import.meta.env.VITE_API_URL;
@@ -59,7 +60,7 @@ function MyAccount() {
           <Forms customer={customerDetails} />
         </div>
       </div>
-
+<Halmark/>
       <Footer />
       <Share/>
     </>

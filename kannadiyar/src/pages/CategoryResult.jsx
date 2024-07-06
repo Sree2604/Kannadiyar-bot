@@ -7,6 +7,7 @@ import Halmark from "../components/Halmark";
 import GreenThing from "../components/GreenThing";
 import { useParams, useNavigate } from "react-router-dom";
 import Share from "../components/Share";
+import Topofferbar from "../components/Topofferbar";
 
 function CategoryResult() {
   const [productData, setProductData] = useState([]);
@@ -38,6 +39,7 @@ function CategoryResult() {
 
   return (
     <>
+    <Topofferbar/>
       <Topnavbar />
       <GreenThing header={"Products"} />
       <div className="lg:flex lg:flex-col">
