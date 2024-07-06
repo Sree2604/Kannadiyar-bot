@@ -5,7 +5,7 @@ import Form from "react-bootstrap/Form";
 import WishlistOffCanvas from "./WishlistOffCanvas";
 import logo from "../assets/logo2.png";
 
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
 
 import OffCanvasMenu from "../components/OffCanvasMenu";
@@ -35,9 +35,7 @@ export default function Topnavbar() {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      const productNames = data.map(
-        (element) => `${element.product_name} (${element.english_name})`
-      );
+      const productNames = data.map((element) => `${element.product_name}`);
       setProductDetails(productNames);
       setFilteredProducts(productNames); // Initialize filtered products
     } catch (error) {
@@ -150,16 +148,15 @@ export default function Topnavbar() {
 
   return (
     <nav className="bg-orange-100 border-b-2 border-primecolor sticky top-9 z-50 shadow-primecolor shadow-2 ">
-    <div className="flex items-center justify-between lg:px-3 px-4 py-2">
-      <a href="/">
-        <img
-          src={logo}
-          alt="kannadiyar-logo"
-          className="lg:ml-36 ml-2 mt-2 mr-1 lg:w-28 w-28 lg:pt-2"
-        />
-      </a>
-      
-        
+      <div className="flex items-center justify-between lg:px-3 px-4 py-2">
+        <a href="/">
+          <img
+            src={logo}
+            alt="kannadiyar-logo"
+            className="lg:ml-36 ml-2 mt-2 mr-1 lg:w-28 w-28 lg:pt-2"
+          />
+        </a>
+
         <Form
           className="flex flex-row h-11 ml-2 w-72 lg:w-80 relative lg:ml-32"
           ref={wrapperRef}
@@ -232,17 +229,14 @@ export default function Topnavbar() {
             </div>
           </div>
         </div>
-        
       </div>
-      
-      <div className="flex-row lg:container lg:mx-auto lg:flex justify-around ">
-        <div className="flex flex-row">
 
-        </div>
+      <div className="flex-row lg:container lg:mx-auto lg:flex justify-around ">
+        <div className="flex flex-row"></div>
         <div className="flex items-center justify-between px-4 lg:px-10 lg:py-13 relative w-full ">
           <div className="flex items-center justify-between w-full lg:w-auto">
-          <CategoryButton />
-        <div className="lg:hidden md:hidden">
+            <CategoryButton />
+            <div className="lg:hidden md:hidden">
               <FaBars
                 className="xs:size-[21px] size-[23px] md:size-[25px] lg:size-[27px] xl:size-[27px]  2xl:size-[29px] text-primecolor cursor-pointer"
                 onClick={() => setShowOffCanvasMenu(!showOffCanvasMenu)}
@@ -253,65 +247,64 @@ export default function Topnavbar() {
               />
             </div>
             <div className="lg:flex hidden md:flex flex-grow  xs:gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-4 2xl:gap-5 ml-24  relative items-center">
-            <ul className="lg:flex lg:space-x-24 text-lg space-y-0 font-content">
-              {menuLinks.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href={link.to}
-                    className={`text-primecolor ${
-                      pathname === link.to ? "font-bold" : ""
-                    }`}
-                  >
-                    {link.text}
-                  </a>
+              <ul className="lg:flex lg:space-x-24 text-lg space-y-0 font-content">
+                {menuLinks.map((link, index) => (
+                  <li key={index}>
+                    <a
+                      href={link.to}
+                      className={`text-primecolor ${
+                        pathname === link.to ? "font-bold" : ""
+                      }`}
+                    >
+                      {link.text}
+                    </a>
+                  </li>
+                ))}
+                <li className="lg:space-y-0 space-y-4 lg:hidden">
+                  <div className="text-primecolor cursor-pointer lg:hidden">
+                    <h1 onClick={() => navigate("/MyAccount")}>My Account</h1>
+                  </div>
+                  <div className="text-primecolor cursor-pointer lg:hidden">
+                    <h1 onClick={() => navigate("/Wishlist")}>Wishlist</h1>
+                  </div>
+                  <div className="text-primecolor cursor-pointer lg:hidden">
+                    <h1 onClick={() => navigate("/booking")}>Cart</h1>
+                  </div>
                 </li>
-              ))}
-              <li className="lg:space-y-0 space-y-4 lg:hidden">
-                <div className="text-primecolor cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("/MyAccount")}>My Account</h1>
+              </ul>
+              <ul className="lg:flex lg:space-x-4 lg:space-y-0 ml-28 font-content">
+                <div className="lg:hidden space-y-2 -ml-16 mb-2 mt-2">
+                  {menuLinks.map((link, index) => (
+                    <li key={index}>
+                      <a
+                        href={link.to}
+                        className={`text-primecolor ${
+                          pathname === link.to ? "font-bold " : ""
+                        }`}
+                      >
+                        {link.text}
+                      </a>
+                    </li>
+                  ))}
+                  <li className="lg:space-y-0 space-y-4">
+                    <div className="text-primecolor cursor-pointer lg:hidden">
+                      <h1 onClick={() => navigate("/MyAccount")}>My Account</h1>
+                    </div>
+                    <div className="text-primecolor cursor-pointer lg:hidden">
+                      <h1 onClick={() => navigate("/Wishlist")}>Wishlist</h1>
+                    </div>
+                    <div className="text-primecolor cursor-pointer lg:hidden">
+                      <h1 onClick={() => navigate("/booking")}>Cart</h1>
+                    </div>
+                  </li>
                 </div>
-                <div className="text-primecolor cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("/Wishlist")}>Wishlist</h1>
-                </div>
-                <div className="text-primecolor cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("/booking")}>Cart</h1>
-                </div>
-              </li>
-            </ul>
-            <ul className="lg:flex lg:space-x-4 lg:space-y-0 ml-28 font-content">
-            <div className="lg:hidden space-y-2 -ml-16 mb-2 mt-2">
-              {menuLinks.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href={link.to}
-                    className={`text-primecolor ${
-                      pathname === link.to ? "font-bold " : ""
-                    }`}
-                  >
-                    {link.text}
-                  </a>
-                </li>
-              ))}
-              <li className="lg:space-y-0 space-y-4">
-                <div className="text-primecolor cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("/MyAccount")}>My Account</h1>
-                </div>
-                <div className="text-primecolor cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("/Wishlist")}>Wishlist</h1>
-                </div>
-                <div className="text-primecolor cursor-pointer lg:hidden">
-                  <h1 onClick={() => navigate("/booking")}>Cart</h1>
-                </div>
-              </li>
+              </ul>
             </div>
-          </ul>
           </div>
-            </div>
-            </div>
+        </div>
       </div>
     </nav>
   );
 }
 
-
-// 
+//
