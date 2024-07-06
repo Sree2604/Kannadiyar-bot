@@ -91,6 +91,7 @@ function ProductCards({ product }) {
           toast.success("Successfully added to wishlist...!", {
             position: toast.POSITION.TOP_RIGHT,
           });
+          // Update wishlist items state
           setWishlistItems((prevItems) => [...prevItems, productId]);
         } else {
           toast.warning("Already in wishlist...!", {
@@ -105,9 +106,15 @@ function ProductCards({ product }) {
   );
 
   const addToCart = useCallback(
-    async (productId) => {
+    async (productId, selectedWeight) => {
       if (!custId || custId === "0") {
         toast.error("You are in guest mode", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        return;
+      }
+      if (selectedWeight == null || undefined) {
+        toast.error("Please select weight..!!", {
           position: toast.POSITION.TOP_RIGHT,
         });
         return;
@@ -121,6 +128,7 @@ function ProductCards({ product }) {
           body: JSON.stringify({
             custId,
             prodId: productId,
+            weight: selectedWeight,
             quantity: 1,
           }),
         });
@@ -191,7 +199,13 @@ function ProductCards({ product }) {
               <Card.Text className="sm:ml-1 pl-2">{val.sub_category}</Card.Text>
               <Card.Body>
                 <div className="flex">
-                  <Drop weight={val.weight} />
+                  <Drop
+                    weight={val.weights}
+                    selectedItem={val.selectedWeight || ""}
+                    setSelectedItem={(selectedItem) =>
+                      (val.selectedWeight = selectedItem)
+                    }
+                  />
                 </div>
                 <div className="flex flex-nowrap gap-20">
                   <Card.Title className="text-red-700 font-content pt-2">
@@ -217,8 +231,8 @@ function ProductCards({ product }) {
                   <Button
                     variant="success"
                     alt="placeholder"
-                    onClick={() => addToCart(val.id)}
-                    className="w-60 bg-primecolor hover:bg-opacity-75 text-orange-100 py-2 px-54 rounded inline-flex items-center"
+                    onClick={() => addToCart(val.id, val.selectedWeight)}
+                    className="w-60 bg-primecolor hovertext-orange-100 py-2 px-54 rounded inline-flex items-center"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

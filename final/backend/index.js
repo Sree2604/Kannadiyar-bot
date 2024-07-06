@@ -179,13 +179,14 @@ app.get("/", async (req, res) => {
 
 // Endpoint to add or remove a product to/from the user's cart (wishlist)
 app.post("/addToCart", async (req, res) => {
-  const { prodId, custId, quantity } = req.body; // Extracting parameters from the query
+  const { prodId, custId, quantity, weight } = req.body; // Extracting parameters from the query
   const { action } = req.query;
 
   try {
     // Handling different actions: add or delete a product from the cart
     if (action === "add") {
       // Check if the product already exists in the user's cart
+
       const selecQry = await pool.query(
         "SELECT * FROM customer_cart WHERE product_id = $1 AND customer_id = $2",
         [prodId, custId]
@@ -199,8 +200,8 @@ app.post("/addToCart", async (req, res) => {
       } else {
         // If the product does not exist in the cart, insert it into the cart and return a 201 (Created) status
         await pool.query(
-          "INSERT INTO customer_cart (product_id, customer_id, quantity) VALUES ($1, $2,$3)",
-          [prodId, custId, quantity]
+          "INSERT INTO customer_cart (product_id, customer_id, quantity, weight) VALUES ($1, $2,$3,$4)",
+          [prodId, custId, quantity, weight]
         );
         return res
           .status(201)
@@ -301,7 +302,7 @@ app.post('/codOrder', async (req, res) => {
     // Send the email using Nodemailer
     let info = await transporter.sendMail({
       from: 'support@kannadiyar.com',
-      to: 'ds04aranganthan@gmail.com',
+      to: customerEmail,
       cc: 'support@kannadiyar.com',
       subject: `Your Order Confirmation - Order ID: ${orderId}`,
       html: message,
@@ -476,8 +477,8 @@ app.get("/calcTariff", async (req, res) => {
       result = "R3";
     }
 
-    const calculateDeliveryCharge = (weightInKg) => {
-
+    const calculateDeliveryCharge = (weightInGrams) => {
+      const weightInKg = weightInGrams / 1000;
       let deliveryCharge = 0;
 
       if (result === "R1") {
@@ -515,7 +516,7 @@ app.get("/api/cart/:userId", async (req, res) => {
   try {
     // SQL query to retrieve items in the user's cart (wishlist) from the database
     const query = `
-      SELECT p.id, p.product_name, p.description, p.mrp, p.stock,p.weight, p.image, c.quantity, c.customer_id
+      SELECT p.id, p.product_name, p.description, p.mrp, p.actual_weight, p.net_weight, p.stock,p.weights, p.image, c.quantity, c.customer_id, c.weight
       FROM product_details p
       INNER JOIN customer_cart c ON p.id = c.product_id
       WHERE c.customer_id = $1
@@ -1133,7 +1134,7 @@ app.post(
       productName,
       productCategory,
       productMrp,
-      productWeight,
+      weights,
       description,
       stock,
       tax,
@@ -1143,6 +1144,8 @@ app.post(
       tamilName,
       botanicalName,
       discountPrice,
+      actualWeight,
+      netWeight
     } = req.body;
     const coverImage = req.files["coverImage"][0].filename; // Extracting cover image filename
     let images = [];
@@ -1152,17 +1155,19 @@ app.post(
       console.error("No images uploaded or incorrect field name used.");
     }
 
+    const parsedWeights = JSON.parse(weights);
+
     try {
       // Inserting product details and uploaded image filenames into the database
       const qry = await pool.query(
         `INSERT INTO product_details 
-    (product_name, product_category, mrp, weight, description, stock, tax, sub_category, created_at, modified_at, image, images, tamil_name,botanical_name,discount_price) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,$13,$14,$15)`,
+    (product_name, product_category, mrp, weights, description, stock, tax, sub_category, created_at, modified_at, image, images, tamil_name,botanical_name,discount_price,actual_weight,net_weight) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
         [
           productName,
           productCategory,
           productMrp,
-          productWeight,
+          parsedWeights,
           description,
           stock,
           tax,
@@ -1174,6 +1179,8 @@ app.post(
           tamilName,
           botanicalName,
           discountPrice,
+          actualWeight,
+          netWeight
         ]
       );
       res.json(qry); // Sending response with query result
@@ -1212,7 +1219,6 @@ app.post(
   async (req, res) => {
     try {
       // Updating the image field for a specific category in the database
-      console.log(req.file.filename, req.body.id);
       const qry = await pool.query(
         "UPDATE category SET image = $1 WHERE id = $2",
         [req.file.filename, req.body.id]
@@ -1501,7 +1507,6 @@ app.get("/searchSuggestion", async (req, res) => {
 app.post("/addCoupon", async (req, res) => {
   const { couponCode, discountPrice, expirationDate, min_purchase } =
     req.body;
-  console.log(couponCode, discountPrice, expirationDate, min_purchase)
   if (
     !couponCode ||
     !discountPrice ||
@@ -1602,6 +1607,7 @@ app.post("/coupon", async (req, res) => {
     return res.status(200).json({
       discount: foundCoupon.discount,
       minimumPurchase: foundCoupon.min_purchase,
+      message: "Coupon Applied...!"
     });
   } catch (error) {
     console.error(error.message);

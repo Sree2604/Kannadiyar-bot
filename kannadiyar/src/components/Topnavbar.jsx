@@ -29,7 +29,9 @@ export default function Topnavbar() {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      const productNames = data.map((element) => element.product_name);
+      const productNames = data.map(
+        (element) => `${element.product_name} (${element.english_name})`
+      );
       setProductDetails(productNames);
       setFilteredProducts(productNames); // Initialize filtered products
     } catch (error) {

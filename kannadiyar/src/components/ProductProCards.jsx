@@ -1,7 +1,7 @@
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Drop from "./Drop";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Rating from "@mui/material/Rating";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -65,12 +65,20 @@ function ProductProCards({ product }) {
     }
   };
 
-  const addToCart = async (productId) => {
-    if (custId == "0" || custId == null) {
-      toast.error("You are in guest mode", {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-    } else {
+  const addToCart = useCallback(
+    async (productId, selectedWeight) => {
+      if (!custId || custId === "0") {
+        toast.error("You are in guest mode", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        return;
+      }
+      if (selectedWeight == null || undefined) {
+        toast.error("Please select weight..!!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        return;
+      }
       try {
         const response = await fetch(`${baseurl}addToCart/?action=add`, {
           method: "POST",
@@ -78,13 +86,13 @@ function ProductProCards({ product }) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            custId: custId,
+            custId,
             prodId: productId,
+            weight: selectedWeight,
             quantity: 1,
           }),
         });
         if (response.ok) {
-          // If successful, update the local state to reflect the added item
           toast.success("Successfully added to cart...!", {
             position: toast.POSITION.TOP_RIGHT,
           });
@@ -95,10 +103,11 @@ function ProductProCards({ product }) {
           });
         }
       } catch (error) {
-        console.error("Error adding item to wishlist:", error);
+        console.error("Error adding item to cart:", error);
       }
-    }
-  };
+    },
+    [custId, baseurl]
+  );
 
   const isWishlist = (productId) => {
     return wishlistItems.includes(productId);
@@ -164,7 +173,13 @@ function ProductProCards({ product }) {
                   </Card.Text>
                   <Card.Body>
                     <div className="flex ">
-                      <Drop weight={val.weight} />
+                      <Drop
+                        weight={val.weights}
+                        selectedItem={val.selectedWeight || ""}
+                        setSelectedItem={(selectedItem) =>
+                          (val.selectedWeight = selectedItem)
+                        }
+                      />
                     </div>
                     <div className=" font-content flex flex-nowrap gap-20">
                       <Card.Title className="font-content  text-red-700 pt-2">
@@ -191,7 +206,7 @@ function ProductProCards({ product }) {
                       <Button
                         variant="success"
                         alt="placeholder"
-                        onClick={() => addToCart(val.id)}
+                        onClick={() => addToCart(val.id, val.selectedWeight)}
                         className="  w-60 bg-primecolor  hover:bg-opacity-75 text-orange-100 py-2 px-54 rounded inline-flex items-center"
                       >
                         <svg

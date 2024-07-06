@@ -15,6 +15,8 @@ function OrderBooking() {
   const [isGuestMode, setIsGuestMode] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [subTotal, setSubTotal] = useState(0);
+  const [cartItemsWithMRP, setCartItemsWithMRP] = useState([]);
+  const [previousDeliveryCharge, setPreviousDeliverCharge] = useState(0);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [couponCode, setCouponCode] = useState("");
   const [discountPrice, setDiscountPrice] = useState(0);
@@ -32,42 +34,77 @@ function OrderBooking() {
 
   useEffect(() => {
     let totalMRP = 0;
-    let totalWeight = 0;
-    cartItems.forEach((item) => {
-      totalMRP += parseFloat(item.mrp) * item.quantity;
+    function convertToBaseUnit(weightStr) {
+      const match = weightStr.match(/(\d+)(\s?)(gm|kg|ml|l|packet\/box)/);
+      if (!match) return 0;
 
-      let weight = item.weight;
-      let weightInKg = 0;
+      const weight = parseInt(match[1]);
+      const unit = match[3];
 
-      // Handling weight with or without space between number and unit
-      const match = weight.match(
-        /(\d+\.?\d*)\s*(gm|grams|gram|kg|kilograms|kilogram)/i
-      );
-      if (match) {
-        const weightValue = parseFloat(match[1]);
-        const weightUnit = match[2].toLowerCase();
-
-        if (
-          weightUnit === "gm" ||
-          weightUnit === "grams" ||
-          weightUnit === "gram"
-        ) {
-          weightInKg = weightValue / 1000; // Convert grams to kilograms
-        } else if (
-          weightUnit === "kg" ||
-          weightUnit === "kilograms" ||
-          weightUnit === "kilogram"
-        ) {
-          weightInKg = weightValue; // Already in kilograms
-        }
+      switch (unit) {
+        case "kg":
+          return weight * 1000; // Convert kg to gm
+        case "l":
+          return weight * 1000; // Convert l to ml
+        case "gm":
+        case "ml":
+        case "packet/box":
+          return weight; // No conversion needed
+        default:
+          return 0;
       }
+    }
 
-      totalWeight += weightInKg * item.quantity;
-    });
+    // Function to calculate MRP for each cart item
+    function calculateMRP(cartItems) {
+      return cartItems.map((item) => {
+        // Convert cart weight and base weight to the appropriate units
+        const cartWeight = convertToBaseUnit(item.weight);
+        const baseWeight = convertToBaseUnit(item.weights[0]);
 
-    totalMRP = totalMRP.toFixed(2);
+        // Special case for packet/box, no conversion needed
+        let scaledMRP, scaledActualWeight, scaledNetWeight;
+        if (item.weight.includes("packet/box")) {
+          scaledMRP = item.mrp;
+          scaledActualWeight = item.actual_weight;
+          scaledNetWeight = item.net_weight;
+        } else {
+          const scaleFactor = cartWeight / baseWeight;
+          scaledMRP = item.mrp * scaleFactor;
+          scaledActualWeight = item.actual_weight * scaleFactor;
+          scaledNetWeight = item.net_weight * scaleFactor;
+        }
+
+        // Calculate total MRP for the given quantity
+        const totalMRP = scaledMRP * item.quantity;
+        const totalActualWeight = scaledActualWeight * item.quantity;
+        const totalNetWeight = scaledNetWeight * item.quantity;
+
+        return {
+          ...item,
+          itemMRP: scaledMRP,
+          totalMRP: totalMRP,
+          itemActualWeight: totalActualWeight,
+          itemNetWeight: totalNetWeight,
+        };
+      });
+    }
+
+    const tempCart = calculateMRP(cartItems);
+    setCartItemsWithMRP(tempCart);
+    const total = tempCart.reduce(
+      (acc, item) => acc + parseFloat(item.totalMRP),
+      0
+    );
+    const totalWeight = tempCart.reduce(
+      (acc, item) => acc + item.itemActualWeight + item.itemNetWeight,
+      0
+    );
+    totalMRP = total.toFixed(2);
+    console.log(totalWeight);
     setSubTotal(parseFloat(totalMRP)); // Ensure subTotal is a number
-    setSubWeight(totalWeight);
+    setSubWeight(parseFloat(totalWeight).toFixed(2));
+    // console.log(cartItems);
   }, [cartItems]);
 
   useEffect(() => {
@@ -207,8 +244,12 @@ function OrderBooking() {
       const data = await response.json();
       if (response.ok) {
         let temp = subTotal * (data.discount / 100);
+        toast.success(data.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
         console.log(temp);
         setDiscountPrice(temp);
+        setPreviousDeliverCharge(deliveryCharge);
         setDeliveryCharge(0);
       } else {
         toast.error(data.message, {
@@ -238,6 +279,7 @@ function OrderBooking() {
       </>
     );
   }
+  console.log(cartItemsWithMRP);
 
   return (
     <>
@@ -260,12 +302,13 @@ function OrderBooking() {
           <div className=" m-2 bg-white shadow-lg p-2 rounded-lg h-96 sm:hidden">
             <h3 className="text-xl font-bold mb-4">Order Summary</h3>
             <div className="mb-4">
-              {cartItems.map((item) => (
+              {cartItemsWithMRP.map((item) => (
                 <div key={item.id} className="flex justify-between mb-2">
                   <p>
                     {item.product_name} ({item.quantity})
                   </p>
-                  <p>₹{(parseFloat(item.mrp) * item.quantity).toFixed(2)}</p>
+                  <p>{item.weight}</p>
+                  <p>₹{parseFloat(item.totalMRP).toFixed(2)}</p>
                 </div>
               ))}
             </div>
@@ -285,7 +328,7 @@ function OrderBooking() {
             </div>
             <div className="flex justify-between font-bold mb-2">
               <p>Total</p>
-              <p>₹{(subTotal + deliveryCharge).toFixed(2)}</p>
+              <p>₹{subTotal.toFixed(2)}</p>
             </div>
           </div>
           <div className="w-full sm:w-4/6 m-2 flex flex-col gap-8">
@@ -306,11 +349,10 @@ function OrderBooking() {
                       onClick={() => {
                         if (selectedAddressId) {
                           setGetAddress(true);
-                        }
-                        else{
+                        } else {
                           toast.error("Please select any one of the address", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
+                            position: toast.POSITION.TOP_RIGHT,
+                          });
                         }
                       }}
                     >
@@ -394,12 +436,13 @@ function OrderBooking() {
           <div className="w-2/6 m-2 bg-white shadow-lg p-2 rounded-lg h-96 hidden sm:flex sm:flex-col">
             <h3 className="text-xl font-bold mb-4">Order Summary</h3>
             <div className="mb-4">
-              {cartItems.map((item) => (
+              {cartItemsWithMRP.map((item) => (
                 <div key={item.id} className="flex justify-between mb-2">
                   <p>
-                    {item.product_name} ({item.quantity})
+                    {item.product_name} - ₹{item.itemMRP} ({item.quantity})
                   </p>
-                  <p>₹{(parseFloat(item.mrp) * item.quantity).toFixed(2)}</p>
+                  <p>{item.weight}</p>
+                  <p>₹{parseFloat(item.totalMRP).toFixed(2)}</p>
                 </div>
               ))}
             </div>
@@ -417,7 +460,10 @@ function OrderBooking() {
               <p>Delivery Charge</p>
               {deliveryCharge == 0 ? (
                 <p>
-                  free <span className="line-through">₹{deliveryCharge}</span>
+                  free{" "}
+                  <span className="line-through">
+                    ₹{previousDeliveryCharge}
+                  </span>
                 </p>
               ) : (
                 <p>₹{deliveryCharge}</p>
@@ -431,7 +477,7 @@ function OrderBooking() {
         </div>
       </div>
       <Footer />
-      <Share/>
+      <Share />
     </>
   );
 }

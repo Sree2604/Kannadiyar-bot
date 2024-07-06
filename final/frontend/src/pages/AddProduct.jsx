@@ -4,8 +4,12 @@ import NavBar from "../components/NavBar";
 
 const AddDetails = ({ data }) => {
   const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [tokenExist, setTokenExist] = useState(false);
 
   const baseUrl = import.meta.env.VITE_API;
+
   useEffect(() => {
     const fetchCategories = async () => {
       const result = await getCategories();
@@ -20,10 +24,8 @@ const AddDetails = ({ data }) => {
     return data;
   };
 
-  const navigate = useNavigate();
-  const token = sessionStorage.getItem("token");
-  const [tokenExist, setTokenExist] = useState(false);
   useEffect(() => {
+    const token = sessionStorage.getItem("token");
     if (token) {
       setTokenExist(true);
     } else {
@@ -39,28 +41,28 @@ const AddDetails = ({ data }) => {
     };
   }, []);
 
-  const [productName, setProductName] = useState();
-  const [productCategory, setProductCategory] = useState();
-  const [productMrp, setProductMrp] = useState();
-  const [productWeight, setProductWeight] = useState();
-  const [images, setSelectedFile] = useState();
-  const [stock, setProductStock] = useState();
-  const [description, setProductDescription] = useState();
-  const [tax, setProductTax] = useState();
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [subCategories, setSubCategories] = useState([]);
-  const [coverImage, setCoverImage] = useState();
+  const navigate = useNavigate();
+
+  const [productName, setProductName] = useState("");
+  const [productCategory, setProductCategory] = useState("");
+  const [productMrp, setProductMrp] = useState("");
+  const [images, setSelectedFile] = useState([]);
+  const [stock, setProductStock] = useState("");
+  const [description, setProductDescription] = useState("");
+  const [tax, setProductTax] = useState("");
+  const [coverImage, setCoverImage] = useState(null);
   const [subCategory, setSubCategory] = useState("");
   const [botanicalName, setBotanicalName] = useState("");
   const [tamilName, setTamilName] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
-  const [measure, setMeasure] = useState("");
-  const [weightInNumber, setWeightInNumber] = useState();
+  const [weights, setWeights] = useState([{ value: "", measure: "" }]);
+  const [actualWeight, setActualWeight] = useState("");
+  const [netWeight, setNetWeight] = useState("");
 
   const handleAdditionalPhotosChange = (event) => {
     const files = event.target.files;
     const filesArray = Array.from(files); // Convert FileList to an array
-    setAdditionalPhotos(filesArray);
+    setSelectedFile(filesArray);
   };
 
   const getTimeStamp = () => {
@@ -77,16 +79,14 @@ const AddDetails = ({ data }) => {
   const handleSubmission = async (e) => {
     e.preventDefault();
     const currentTimeStamp = getTimeStamp();
-    const formData = new FormData();
-    var createdAt = currentTimeStamp;
-    var modifyAt = currentTimeStamp;
-    const finalWeight = `${weightInNumber} ${measure}`;
-    setProductWeight(finalWeight);
+    const createdAt = currentTimeStamp;
+    const modifyAt = currentTimeStamp;
+
     data({
       productName,
       productCategory,
       productMrp,
-      productWeight,
+      weights,
       createdAt,
       modifyAt,
       stock,
@@ -98,16 +98,20 @@ const AddDetails = ({ data }) => {
       coverImage,
       subCategory,
       images,
+      actualWeight,
+      netWeight,
     });
+
+    // Clear form fields after submission
     setProductName("");
     setProductCategory("");
     setProductMrp("");
-    setSelectedFile(null);
+    setSelectedFile([]);
     setCoverImage(null);
     setTamilName("");
     setBotanicalName("");
     setDiscountPrice("");
-    setProductWeight("");
+    setWeights([{ value: "", measure: "" }]);
     setProductDescription("");
     setProductStock("");
     setProductTax("");
@@ -127,10 +131,22 @@ const AddDetails = ({ data }) => {
     }
   };
 
-  const handleWeight = (e) => {
-    const { value } = e.target;
-    setMeasure(value);
+  const handleWeightChange = (index, value, measure) => {
+    const newWeights = [...weights];
+    newWeights[index] = { value, measure };
+    setWeights(newWeights);
   };
+
+  const addWeight = () => {
+    setWeights([...weights, { value: "", measure: "" }]);
+  };
+
+  const removeWeight = (index) => {
+    const newWeights = [...weights];
+    newWeights.splice(index, 1);
+    setWeights(newWeights);
+  };
+
   return (
     <>
       {tokenExist && (
@@ -145,56 +161,56 @@ const AddDetails = ({ data }) => {
             <div className="flex flex-col">
               <form
                 onSubmit={handleSubmission}
-                className=" bg-orange-100 p-7 rounded-lg"
+                className="bg-orange-100 p-7 rounded-lg"
               >
                 <label
                   className="text-l font-semibold font-content text-primecolor mr-3"
-                  for="productName"
+                  htmlFor="productName"
                 >
                   Product Name: &nbsp;
                 </label>
                 <input
-                  className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content  focus:outline-brown"
+                  className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content focus:outline-brown"
                   type="text"
                   placeholder="Enter the product name:"
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
                   required
                 />
-                <br></br>
+                <br />
                 <div className="flex flex-row">
                   <div className="flex flex-row">
                     <label
                       className="text-l mt-4 mr-4 font-semibold font-content text-primecolor"
-                      for="productName"
+                      htmlFor="productCategory"
                     >
                       Category: &nbsp;
                     </label>
                     <select
                       value={selectedCategory}
                       onChange={handleCategoryChange}
-                      className="w-full shadow-md rounded py-2 px-3 mt-1 mb-4 ml-11  bg-gray-50 font-content  focus:outline-brown"
+                      className="w-full shadow-md rounded py-2 px-3 mt-1 mb-4 ml-11 bg-gray-50 font-content focus:outline-brown"
                     >
                       <option value="">Select Category</option>
                       {categories.map((category) => (
-                        <option key={category.id} value={category.name}>
+                        <option key={category.id} value={category.category}>
                           {category.category}
                         </option>
                       ))}
                     </select>
-                    <br></br>
+                    <br />
                   </div>
 
                   <div className="flex flex-row">
                     <label
                       className="text-l font-semibold font-content text-primecolor ml-56"
-                      for="productName"
+                      htmlFor="subCategory"
                     >
                       Sub Category: &nbsp;
                     </label>
                     <select
                       onChange={(e) => setSubCategory(e.target.value)}
-                      className="w-full shadow-md rounded py-2 px-3 mt-1 m-4 bg-gray-50 font-content  focus:outline-brown"
+                      className="w-full shadow-md rounded py-2 px-3 mt-1 m-4 bg-gray-50 font-content focus:outline-brown"
                     >
                       <option value="">Select Subcategory</option>
                       {subCategories.map((subcategory) => (
@@ -204,174 +220,233 @@ const AddDetails = ({ data }) => {
                       ))}
                     </select>
                   </div>
-                  <br></br>
+                  <br />
                 </div>
                 <div className="flex flex-row">
                   <label
-                    className="text-l font-semibold mt-3 font-content text-primecolor"
-                    for="productMrp"
+                    className="text-l font-semibold font-content mt-3 text-primecolor"
+                    htmlFor="productMrp"
                   >
                     MRP: &nbsp;
                   </label>
                   <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content ml-24  focus:outline-brown"
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content ml-24 focus:outline-brown"
                     type="text"
                     placeholder="Enter the MRP"
                     value={productMrp}
                     onChange={(e) => setProductMrp(e.target.value)}
                     required
                   />
-                  <br></br>
-                  <label
-                    className="text-l font-semibold font-content mt-3 text-primecolor ml-16"
-                    for="productWeight"
-                  >
-                    Weight: &nbsp;
-                  </label>
-                  <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content ml-8  focus:outline-brown"
-                    type="text"
-                    placeholder="Enter the weight"
-                    value={weightInNumber}
-                    onChange={(e) => setWeightInNumber(e.target.value)}
-                    required
-                  />
-                  <select
-                    value={measure}
-                    required
-                    onChange={handleWeight}
-                    className="w-full shadow-md rounded py-2 px-3 mt-1 m-4 bg-gray-50 font-content  focus:outline-brown"
-                  >
-                    <option value="">Select measure</option>
-                    <option value="gm">gm</option>
-                    <option value="kg">kg</option>
-                  </select>
-                  <br></br>
+                  <br />
                 </div>
+
+                <div className="flex flex-col">
+                  <label
+                    className="text-l font-semibold font-content mt-3 text-primecolor"
+                    htmlFor="productWeight"
+                  >
+                    Weights: &nbsp;
+                  </label>
+                  {weights.map((weight, index) => (
+                    <div key={index} className="flex flex-row mb-2">
+                      <input
+                        className="w-1/2 shadow-md rounded py-2 px-3 bg-gray-50 font-content focus:outline-brown"
+                        type="text"
+                        placeholder="Enter the weight"
+                        value={weight.value}
+                        onChange={(e) =>
+                          handleWeightChange(
+                            index,
+                            e.target.value,
+                            weight.measure
+                          )
+                        }
+                        required
+                      />
+                      <select
+                        value={weight.measure}
+                        onChange={(e) =>
+                          handleWeightChange(
+                            index,
+                            weight.value,
+                            e.target.value
+                          )
+                        }
+                        className="w-1/4 shadow-md rounded py-2 px-3 ml-2 bg-gray-50 font-content focus:outline-brown"
+                      >
+                        <option value="">Select measure</option>
+                        <option value="gm">gm</option>
+                        <option value="kg">kg</option>
+                        <option value="packet/box">packet/box</option>
+                        <option value="ml">ml</option>
+                      </select>
+                      <button type="button" onClick={() => removeWeight(index)}>
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+
+                  <button type="button" onClick={addWeight}>
+                    Add Weight
+                  </button>
+                </div>
+
                 <div className="flex flex-row">
                   <label
                     className="text-l font-semibold font-content mt-3 text-primecolor"
-                    for="productdescription"
+                    htmlFor="productDescription"
                   >
                     Description: &nbsp;
                   </label>
                   <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-9 bg-gray-50 font-content  focus:outline-brown"
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-9 bg-gray-50 font-content focus:outline-brown"
                     type="text"
                     placeholder="Enter the description"
                     value={description}
                     onChange={(e) => setProductDescription(e.target.value)}
                     required
                   />
-                  <br></br>
+                  <br />
                   <label
                     className="text-l mt-3 font-semibold font-content text-primecolor ml-16"
-                    for="productstock"
+                    htmlFor="productStock"
                   >
                     Stock: &nbsp;
                   </label>
                   <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-12 bg-gray-50 font-content  focus:outline-brown"
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-12 bg-gray-50 font-content focus:outline-brown"
                     type="text"
                     placeholder="Enter the stock"
                     value={stock}
                     onChange={(e) => setProductStock(e.target.value)}
                     required
                   />
-                  <br></br>
+                  <br />
                 </div>
                 <div className="flex flex-row">
                   <label
                     className="text-l font-semibold font-content mt-3 text-primecolor"
-                    for="productstock"
+                    htmlFor="botanicalName"
                   >
                     Botanical Name: &nbsp;
                   </label>
                   <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content  focus:outline-brown"
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content focus:outline-brown"
                     type="text"
                     placeholder="Enter the botanical name"
                     value={botanicalName}
                     onChange={(e) => setBotanicalName(e.target.value)}
                     required
                   />
-                  <br></br>
+                  <br />
                   <label
                     className="text-l font-semibold mt-3 font-content text-primecolor ml-16"
-                    for="productstock"
+                    htmlFor="tamilName"
                   >
                     Tamil Name: &nbsp;
                   </label>
                   <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content  focus:outline-brown"
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content focus:outline-brown"
                     type="text"
                     placeholder="Enter the tamil name"
                     value={tamilName}
                     onChange={(e) => setTamilName(e.target.value)}
                     required
                   />
-                  <br></br>
+                  <br />
                 </div>
                 <div className="flex flex-row">
                   <label
                     className="text-l font-semibold font-content mt-3 text-primecolor"
-                    for="productstock"
+                    htmlFor="discountPrice"
                   >
                     Discount Price: &nbsp;
                   </label>
                   <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-4 bg-gray-50 font-content  focus:outline-brown"
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-4 bg-gray-50 font-content focus:outline-brown"
                     type="text"
                     placeholder="Enter the discount price"
                     value={discountPrice}
                     onChange={(e) => setDiscountPrice(e.target.value)}
                     required
                   />
-                  <br></br>
+                  <br />
                   <label
                     className="text-l font-semibold mt-3 font-content text-primecolor ml-16"
-                    for="productTax"
+                    htmlFor="tax"
                   >
                     Tax: &nbsp;
                   </label>
                   <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-16 bg-gray-50 font-content  focus:outline-brown"
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-16 bg-gray-50 font-content focus:outline-brown"
                     type="text"
                     placeholder="Enter the tax"
                     value={tax}
                     onChange={(e) => setProductTax(e.target.value)}
                     required
                   />
-                  <br></br>
+                  <br />
                 </div>
                 <div className="flex flex-row">
                   <label
                     className="text-l font-semibold font-content mt-3 text-primecolor"
-                    for="productImage"
+                    htmlFor="actualWeight"
+                  >
+                    Actual Product Weight: &nbsp;
+                  </label>
+                  <input
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-4 bg-gray-50 font-content focus:outline-brown"
+                    type="text"
+                    placeholder="Enter the actual weight"
+                    value={actualWeight}
+                    onChange={(e) => setActualWeight(e.target.value)}
+                    required
+                  />
+                  <br />
+                  <label
+                    className="text-l font-semibold mt-3 font-content text-primecolor ml-16"
+                    htmlFor="tax"
+                  >
+                    Product Net Weight: &nbsp;
+                  </label>
+                  <input
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-16 bg-gray-50 font-content focus:outline-brown"
+                    type="text"
+                    placeholder="Enter the net weight"
+                    value={netWeight}
+                    onChange={(e) => setNetWeight(e.target.value)}
+                    required
+                  />
+                  <br />
+                </div>
+                <div className="flex flex-row">
+                  <label
+                    className="text-l font-semibold font-content mt-3 text-primecolor"
+                    htmlFor="productImages"
                   >
                     Product Images: &nbsp;
                   </label>
                   <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-contetnt  focus:outline-brown"
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 bg-gray-50 font-content focus:outline-brown"
                     type="file"
-                    onChange={(e) => setSelectedFile(e.target.files)}
+                    onChange={handleAdditionalPhotosChange}
                     multiple
                     required
                   />
-                  <br></br>
+                  <br />
                   <label
                     className="text-l font-semibold mt-3 font-content text-primecolor ml-10"
-                    for="productImage"
+                    htmlFor="coverImage"
                   >
                     Cover Image: &nbsp;
                   </label>
                   <input
-                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-4 bg-gray-50 font-admin  focus:outline-brown"
+                    className="w-96 shadow-md rounded py-2 px-3 mt-1 mb-4 ml-4 bg-gray-50 font-content focus:outline-brown"
                     type="file"
                     onChange={(e) => setCoverImage(e.target.files[0])}
                     required
                   />
-                  <br></br>
+                  <br />
                 </div>
                 <div className="flex justify-center">
                   <button

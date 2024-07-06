@@ -2,7 +2,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Counter from "./Counter";
 import { Rating } from "@mui/material";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -54,6 +54,13 @@ function ProductContent({ productData }) {
     }
   };
 
+  const [selectedWeight, setSelectedWeight] = useState("");
+
+  const handleWeightChange = (event) => {
+    setSelectedWeight(event.target.value);
+    console.log(event.target.value);
+  };
+
   const decreaseQuantity = () => {
     if (quantity == 1) {
       setQuantity(1);
@@ -70,27 +77,34 @@ function ProductContent({ productData }) {
         });
         return;
       } else {
-        const response = await fetch(`${baseurl}addToCart/?action=add`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            custId: custId,
-            prodId: productId,
-            quantity: quantity,
-          }),
-        });
-        if (response.ok) {
-          // If successful, update the local state to reflect the added item
-          toast.success("Successfully added to cart...!", {
+        if (selectedWeight === "") {
+          toast.error("Please select the weight", {
             position: toast.POSITION.TOP_RIGHT,
           });
-          window.location.reload();
         } else {
-          toast.warning("Already in cart...!", {
-            position: toast.POSITION.TOP_RIGHT,
+          const response = await fetch(`${baseurl}addToCart/?action=add`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              custId: custId,
+              prodId: productId,
+              quantity: quantity,
+              weight: selectedWeight,
+            }),
           });
+          if (response.ok) {
+            // If successful, update the local state to reflect the added item
+            toast.success("Successfully added to cart...!", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+            window.location.reload();
+          } else {
+            toast.warning("Already in cart...!", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          }
         }
       }
     } catch (error) {
@@ -136,7 +150,21 @@ function ProductContent({ productData }) {
                 <h1 className="lg:pl-10 lg:text-xl lg:pt-6">Available in :</h1>
                 <div className="lg:pl-10 lg:pt-4">
                   <h2 className="lg:text-lg lg:p-2 font-content font-bold">
-                    {product.weight}
+                    {product.weights.map((weight, index) => (
+                      <React.Fragment key={index}>
+                        <input
+                          type="radio"
+                          value={weight}
+                          name="selectedWeight"
+                          onChange={handleWeightChange}
+                        />
+                        &nbsp;
+                        <label htmlFor={`selectedWeight-${index}`}>
+                          {weight}
+                        </label>
+                        &nbsp; &nbsp;
+                      </React.Fragment>
+                    ))}
                   </h2>
                 </div>
                 <div className="lg:pl-10 lg:pt-6 lg:flex lg:flex-row">

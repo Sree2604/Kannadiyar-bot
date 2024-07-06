@@ -42,7 +42,7 @@ function App() {
     formData.append("productCategory", data.productCategory);
     formData.append("subCategory", data.subCategory);
     formData.append("productMrp", data.productMrp);
-    formData.append("productWeight", data.productWeight);
+    formData.append("weights", JSON.stringify(data.weights));
     formData.append("createdAt", data.createdAt);
     formData.append("modifyAt", data.modifyAt);
     formData.append("description", data.description);
@@ -51,6 +51,8 @@ function App() {
     formData.append("tamilName", data.tamilName);
     formData.append("botanicalName", data.botanicalName);
     formData.append("discountPrice", data.discountPrice);
+    formData.append("actualWeight", data.actualWeight);
+    formData.append("netWeight", data.netWeight);
     formData.append("coverImage", data.coverImage);
     if (data.images && data.images.length > 0) {
       for (let i = 0; i < data.images.length; i++) {

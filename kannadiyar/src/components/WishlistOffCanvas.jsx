@@ -24,6 +24,7 @@ function WishlistOffCanvas() {
 
   useEffect(() => {
     calculateSubTotal();
+    console.log(cartItems);
   }, [cartItems]);
 
   const fetchCartItems = async () => {
@@ -36,10 +37,57 @@ function WishlistOffCanvas() {
       setCartItems([]);
     }
   };
+  function convertToBaseUnit(weightStr) {
+    const match = weightStr.match(/(\d+)(\s?)(gm|kg|ml|l|packet\/box)/);
+    if (!match) return 0;
 
+    const weight = parseInt(match[1]);
+    const unit = match[3];
+
+    switch (unit) {
+      case "kg":
+        return weight * 1000; // Convert kg to gm
+      case "l":
+        return weight * 1000; // Convert l to ml
+      case "gm":
+      case "ml":
+      case "packet/box":
+        return weight; // No conversion needed
+      default:
+        return 0;
+    }
+  }
+
+  // Function to calculate MRP for each cart item
+  function calculateMRP(cartItems) {
+    return cartItems.map((item) => {
+      // Convert cart weight and base weight to the appropriate units
+      const cartWeight = convertToBaseUnit(item.weight);
+      const baseWeight = convertToBaseUnit(item.weights[0]);
+
+      // Special case for packet/box, no conversion needed
+      let scaledMRP;
+      if (item.weight.includes("packet/box")) {
+        scaledMRP = item.mrp;
+      } else {
+        const scaleFactor = cartWeight / baseWeight;
+        scaledMRP = item.mrp * scaleFactor;
+      }
+
+      // Calculate total MRP for the given quantity
+      const totalMRP = scaledMRP * item.quantity;
+
+      return {
+        ...item,
+        itemMRP: scaledMRP,
+        totalMRP: totalMRP,
+      };
+    });
+  }
   const calculateSubTotal = () => {
-    const total = cartItems.reduce(
-      (acc, item) => acc + parseFloat(item.mrp) * item.quantity,
+    const cartItemsWithMRP = calculateMRP(cartItems);
+    const total = cartItemsWithMRP.reduce(
+      (acc, item) => acc + parseFloat(item.totalMRP),
       0
     );
     setSubTotal(total.toFixed(2));
@@ -167,6 +215,7 @@ function WishlistOffCanvas() {
                     <div className="lg:flex lg:flex-col lg:ml-4">
                       <h1 className="lg:text-xl">{item.product_name}</h1>
                       <h1 className="lg:text-lg">₹{item.mrp}</h1>
+                      <h1 className="lg:text-lg">{item.weight}</h1>
                       <Counter
                         increase={() => handleQuantityChange(item.id, 1)}
                         decrease={() => handleQuantityChange(item.id, -1)}
