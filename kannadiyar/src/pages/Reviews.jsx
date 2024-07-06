@@ -6,6 +6,8 @@ import React, { useState} from "react";
 import GreenThing from "../components/GreenThing";
 import ReivewForm from "../components/ReviewForm";
 import Share from "../components/Share";
+import Topofferbar from "../components/Topofferbar";
+import Halmark from "../components/Halmark";
 
 const Reviews = () => {
   const [reviews, setReviews] = useState([
@@ -125,9 +127,11 @@ const Reviews = () => {
 
   return (
     <>
+    <Topofferbar/>
     <Topnavbar/>
     <GreenThing header={"Review Page"} />
    <ReivewForm/>
+   <Halmark/>
     <Footer/>
     <Share/>
     </>

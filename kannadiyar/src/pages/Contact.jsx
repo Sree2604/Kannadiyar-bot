@@ -3,10 +3,13 @@ import Topnavbar from "../components/Topnavbar";
 import Footer from "../components/Footer";
 import Contactbox from "../components/Contactbox";
 import Share from "../components/Share";
+import Topofferbar from "../components/Topofferbar";
+import Halmark from "../components/Halmark";
 
 function Contact() {
   return (
     <>
+    <Topofferbar/>
       <Topnavbar />
       <div className="sm: flex sm: flex-col font-content text-primecolor md:flex md:flex-row lg:flex lg:flex-row lg:ml-96 ml-12">
         <div className="sm: w-12 md:ml-8  lg:flex lg:flex-col lg:w-96 lg:ml-28">
@@ -54,6 +57,7 @@ function Contact() {
           </div>
         </div>
       </div>
+      <Halmark/>
       <Footer />
       <Share/>
     </>

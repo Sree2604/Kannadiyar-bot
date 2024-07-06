@@ -45,13 +45,13 @@ const CategoryButton = () => {
     <div className="flex justify-center items-center">
       <Dropdown
         title="⇄ All Categories"
-        className="font-content font-semibold rounded-md relative p-2 border mt-2 mb-2 lg:ml-64 ml-24 bg-orange-100 text-primecolor hover:bg-primecolor hover:text-orange-100"
+        className="font-content font-semibold rounded-md relative p-2 border mt-2 mb-2 lg:ml-64 ml-28 bg-orange-100 text-primecolor hover:bg-primecolor hover:text-orange-100"
       >
         {categories.map((category) => (
-          <Dropdown.Item
+          <Dropdown.Item 
             key={category.id}
             onClick={() => handleCategoryClick(category)}
-            className="lg:mr-12 lg:gap-2 mr-12"
+            className="lg:mr-12 lg:gap-2 mr-12 "
           >
             <img
               src={`http://localhost:4000/categories/${category.image}`}
@@ -64,6 +64,7 @@ const CategoryButton = () => {
                 <Dropdown.Item
                   onClick={() => handleSubCategoryClick(subcategory)}
                   key={index}
+                  className=""
                 >
                   {subcategory}
                 </Dropdown.Item>

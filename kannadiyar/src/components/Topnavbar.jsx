@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CategoryButton from "./CategoryButton";
-import logo from "../assets/logo2.png";
 import Form from "react-bootstrap/Form";
 import WishlistOffCanvas from "./WishlistOffCanvas";
+import logo from "../assets/logo2.png";
+
+import { Link} from "react-router-dom";
+import { FaBars } from "react-icons/fa";
+
+import OffCanvasMenu from "../components/OffCanvasMenu";
 
 export default function Topnavbar() {
   const [searchInput, setSearchInput] = useState("");
@@ -15,6 +20,7 @@ export default function Topnavbar() {
   const wrapperRef = useRef(null);
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [showOffCanvasMenu, setShowOffCanvasMenu] = useState(false);
   const baseurl = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
@@ -141,17 +147,19 @@ export default function Topnavbar() {
   ];
 
   return (
-    <nav className="bg-orange-100 border-b-2 border-primecolor sticky top-0 z-50">
-      <div className="flex flex-row">
-        <a href="/">
-          <img
-            src={logo}
-            alt="kannadiyar-logo"
-            className="lg:ml-72 ml-2 mt-2 mr-1 lg:mr-28 w-12"
-          />
-        </a>
+    <nav className="bg-orange-100 border-b-2 border-primecolor sticky top-9 z-50 shadow-primecolor shadow-2 ">
+    <div className="flex items-center justify-between lg:px-3 px-4 py-2">
+      <a href="/">
+        <img
+          src={logo}
+          alt="kannadiyar-logo"
+          className="lg:ml-36 ml-2 mt-2 mr-1 lg:w-28 w-28 lg:pt-2"
+        />
+      </a>
+      
+        
         <Form
-          className="flex flex-row h-11 ml-2 w-72 lg:w-80 relative"
+          className="flex flex-row h-11 ml-2 w-72 lg:w-80 relative lg:ml-32"
           ref={wrapperRef}
         >
           <Form.Control
@@ -199,13 +207,13 @@ export default function Topnavbar() {
             </button>
           </div>
         )}
-        <div className="relative border mt-2 p-2 ml-28 mr-4 rounded-full w-10 h-11 text-2xl cursor-pointer text-primecolor bg-orange-100 hover:text-orange-100 hover:bg-primecolor lg:block hidden">
+        <div className="relative border mt-2 p-2 ml-36 mr-4 rounded-full w-10 h-11 text-2xl cursor-pointer text-primecolor bg-orange-100 hover:text-orange-100 hover:bg-primecolor lg:block hidden">
           <ion-icon
             onClick={() => navigate("/MyAccount")}
             name="person-outline"
           ></ion-icon>
         </div>
-        <div className="relative border p-2 mt-2 ml-2 mr-4 rounded-full w-10 h-11 text-2xl cursor-pointer text-primecolor bg-orange-100 hover:text-orange-100 hover:bg-primecolor lg:block hidden">
+        <div className="relative border p-2 mt-2 ml-6 mr-4 rounded-full w-10 h-11 text-2xl cursor-pointer text-primecolor bg-orange-100 hover:text-orange-100 hover:bg-primecolor lg:block hidden">
           <ion-icon
             onClick={() => navigate("/Wishlist")}
             name="heart-outline"
@@ -215,30 +223,40 @@ export default function Topnavbar() {
           </div>
         </div>
         <div className="relative flex">
-          <div className="hidden lg:block p-2 relative mt-2">
+          <div className="hidden lg:block p-2 relative mt-2 ml-6">
             <WishlistOffCanvas />
             <div className="absolute top-0 left-10 w-5 h-5 rounded-full bg-red-600 text-white text-xs flex items-center justify-center">
               {cartCount}
             </div>
           </div>
         </div>
+        
       </div>
+      
       <div className="flex-row lg:container lg:mx-auto lg:flex justify-around ">
         <div className="flex flex-row">
-        <CategoryButton />
-        <button
+       
+        {/* <button
           onClick={toggleMenu}
           className="text-primecolor focus:outline-none text-2xl lg:hidden ml-24 "
         >
           ☰
-        </button>
+        </button> */}
         </div>
-        <div
-          className={`lg:flex   lg:items-center lg:w-auto ${
-            isMenuOpen ? "block" : "hidden"
-          }`}
-        >
-          <div className="hidden lg:block mr-32">
+        <div className="flex items-center justify-between px-4 lg:px-10 lg:py-13 relative w-full ">
+          <div className="flex items-center justify-between w-full lg:w-auto">
+          <CategoryButton />
+        <div className="lg:hidden md:hidden">
+              <FaBars
+                className="xs:size-[21px] size-[23px] md:size-[25px] lg:size-[27px] xl:size-[27px]  2xl:size-[29px] text-primecolor cursor-pointer"
+                onClick={() => setShowOffCanvasMenu(!showOffCanvasMenu)}
+              />
+              <OffCanvasMenu
+                isOpen={showOffCanvasMenu}
+                onClose={() => setShowOffCanvasMenu(false)}
+              />
+            </div>
+            <div className="lg:flex hidden md:flex flex-grow  xs:gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-4 2xl:gap-5 ml-24  relative items-center">
             <ul className="lg:flex lg:space-x-24 text-lg space-y-0 font-content">
               {menuLinks.map((link, index) => (
                 <li key={index}>
@@ -264,8 +282,7 @@ export default function Topnavbar() {
                 </div>
               </li>
             </ul>
-          </div>
-          <ul className="lg:flex lg:space-x-4 lg:space-y-0 ml-28 font-content">
+            <ul className="lg:flex lg:space-x-4 lg:space-y-0 ml-28 font-content">
             <div className="lg:hidden space-y-2 -ml-16 mb-2 mt-2">
               {menuLinks.map((link, index) => (
                 <li key={index}>
@@ -292,8 +309,13 @@ export default function Topnavbar() {
               </li>
             </div>
           </ul>
-        </div>
+          </div>
+            </div>
+            </div>
       </div>
     </nav>
   );
 }
+
+
+// 

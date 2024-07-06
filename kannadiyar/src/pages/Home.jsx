@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Share from "../components/Share";
 
+
 function Home() {
   const baseurl = import.meta.env.VITE_API_URL;
   const [productData, setProductData] = useState([]);
@@ -55,9 +56,11 @@ function Home() {
       <div className="">
         {tokenExist && (
           <>
-            <Topofferbar />
 
+            <Topofferbar /> 
+    
             <Topnavbar />
+          
             <div>
               <Carousels />
             </div>

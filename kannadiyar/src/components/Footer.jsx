@@ -4,7 +4,7 @@ import photo1 from "../assets/poster1.jpg"
 
 const Footer = () => {
   return (
-    <footer className="bg-primecolor text-center font-content text-orange-100  lg:text-left mt-5">
+    <footer className="bg-primecolor text-center font-content text-orange-100  lg:text-left ">
       <div className="mx-6 py-10 text-center md:text-left">
         <div className="grid-1 grid gap-8 lg:grid-cols-5  ">
           {/* TW elements section */}
@@ -32,6 +32,9 @@ const Footer = () => {
             <p  className="text-lg mt-4">
               UNIT 1
             </p>
+            <p>
+              address
+            </p>
           </div>
           <div>
             {/* Content for Products section */}
@@ -42,6 +45,9 @@ const Footer = () => {
             />
             <p  className="text-lg mt-4">
               UNIT 2
+            </p>
+            <p>
+              address
             </p>
           </div>
 
@@ -55,6 +61,9 @@ const Footer = () => {
             />
             <p  className="text-lg mt-4">
               UNIT 3
+            </p>
+            <p>
+              address
             </p>
           </div>
 
@@ -111,7 +120,7 @@ const Footer = () => {
 
       {/* Copyright section */}
       <div className=" p-6 text-center font-content text-primecolor bg-orange-100 flex items-center justify-center border-b-2 lg:justify-between">
-        <span>© 2023 Copyright:</span>
+        <span>© 2024 Copyright:</span>
         <a
           className="font-semibold text-primecolor"
           href="https://tw-elements.com/"

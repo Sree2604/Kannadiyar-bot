@@ -28,14 +28,14 @@ const CategoryCard = () => {
 
   const assignColorToCategories = (categories) => {
     const colors = [
-      "bg-cyan-100",
-      "bg-purple-200",
-      "bg-sky-200",
-      "bg-violet-200",
-      "bg-indigo-200",
-      "bg-teal-200",
-      "bg-pink-200",
-      "bg-indigo-200",
+      "bg-orange-100",
+      "bg-orange-100",
+      "bg-orange-100",
+      "bg-orange-100",
+      "bg-orange-100",
+      "bg-orange-100",
+      "bg-orange-100",
+      "bg-orange-100",
     ];
 
     return categories.map((category, index) => {
@@ -50,11 +50,11 @@ const CategoryCard = () => {
   const [slideIndex, setSlideIndex] = useState(0);
 
   const handleNextSlide = () => {
-    setSlideIndex((prevIndex) => (prevIndex + 1.2) % Math.ceil(9));
+    setSlideIndex((prevIndex) => (prevIndex + 1.2) % Math.ceil(5));
   };
 
   const handlePrevSlide = () => {
-    setSlideIndex((prevIndex) => (prevIndex - 1.2) % Math.ceil(9));
+    setSlideIndex((prevIndex) => (prevIndex - 1.2) % Math.ceil(5));
   };
 
   const cardWidth = 280; // Adjust based on the actual width of your cards
