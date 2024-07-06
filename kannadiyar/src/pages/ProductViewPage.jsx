@@ -8,6 +8,7 @@ import DescriptionBox from "../components/DescriptionBox";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Share from "../components/Share";
+import Halmark from "../components/Halmark";
 
 function ProductViewPage() {
   const [product, setProduct] = useState([]);
@@ -69,11 +70,12 @@ function ProductViewPage() {
         <DescriptionBox productData={product} />
 
         <div className=" lg:mt-10">
-          <h1 className="lg:text-2xl lg:ml-11 lg:font-semibold">
+          <h1 className="lg:text-2xl lg:ml-11 lg:font-semibold font-content  sm: ml-5 mb-3 lg:mt-6 mt-6 text-xl text-primecolo">
             Frequently Purchased
           </h1>
           <ProductCards product={productData} />
         </div>
+        <Halmark/>
         <Footer />
         <Share/>
       </div>

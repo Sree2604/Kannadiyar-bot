@@ -51,22 +51,19 @@ const Carousels = () => {
     <div className="w-fit  flex ">
       <Carousel>
         <Carousel.Item>
-          <img src={photo1} text="First slide" className="lg:h-[500px] lg:w-screen" />
-          <Carousel.Caption>
-            <h3>First slide label</h3>
-          </Carousel.Caption>
+          <img src={photo1} text="First slide" className="lg:h-[500px] lg:w-screen h-[284px] w-screen" />
         </Carousel.Item>
         <Carousel.Item>
-          <img src={photo4} text="Second slide" className="lg:h-[500px] lg:w-screen"/>
-          <Carousel.Caption>
-            <h3>Second slide label</h3>
-          </Carousel.Caption>
+          <img src={photo2} text="Second slide" className="lg:h-[500px] lg:w-screen h-[284px] w-screen"/>
         </Carousel.Item>
         <Carousel.Item>
-          <img src={photo5} text="Third slide" className="lg:h-[500px] lg:w-screen"/>
-          <Carousel.Caption>
-            <h3>Third slide label</h3>
-          </Carousel.Caption>
+          <img src={photo3} text="Third slide" className="lg:h-[500px] lg:w-screen h-[284px] w-screen"/>
+        </Carousel.Item>
+        <Carousel.Item>
+          <img src={photo4} text="Third slide" className="lg:h-[500px] lg:w-screen h-[284px] w-screen"/>
+        </Carousel.Item>
+        <Carousel.Item>
+          <img src={photo5} text="Third slide" className="lg:h-[500px] lg:w-screen h-[284px] w-screen"/>
         </Carousel.Item>
       </Carousel>
     </div>

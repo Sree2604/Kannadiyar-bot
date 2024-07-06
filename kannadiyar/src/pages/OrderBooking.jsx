@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Share from "../components/Share";
+import Halmark from "../components/Halmark";
 
 function OrderBooking() {
   const custId = sessionStorage.getItem("custId");
@@ -296,7 +297,7 @@ function OrderBooking() {
       <ToastContainer />
       <Topofferbar />
       <Topnavbar />
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center font-content">
         <h2 className="text-xl font-bold">Checkout</h2>
         <div className="w-4/5 flex flex-col sm:flex-row">
           <div className=" m-2 bg-white shadow-lg p-2 rounded-lg h-96 sm:hidden">
@@ -433,8 +434,8 @@ function OrderBooking() {
               </div>
             )}
           </div>
-          <div className="w-2/6 m-2 bg-white shadow-lg p-2 rounded-lg h-96 hidden sm:flex sm:flex-col">
-            <h3 className="text-xl font-bold mb-4">Order Summary</h3>
+          <div className="w-2/6 m-2 bg-white shadow-lg p-2 rounded-lg h-96 hidden font-content sm:flex sm:flex-col">
+            <h3 className="text-xl font-bold font-content mb-4">Order Summary</h3>
             <div className="mb-4">
               {cartItemsWithMRP.map((item) => (
                 <div key={item.id} className="flex justify-between mb-2">
@@ -476,6 +477,7 @@ function OrderBooking() {
           </div>
         </div>
       </div>
+      <Halmark/>
       <Footer />
       <Share />
     </>

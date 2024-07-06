@@ -17,10 +17,10 @@ function About() {
       <GreenThing header={"About Us"} />
       <div className=" sm: ml-2 sm: mr-2 lg:flex lg:flex-row p-4">
         <div className="lg:flex lg:flex-col">
-          <h1 className="sm: font-content sm: mt-3 sm: text-xl sm: font-semibold lg:mt-10 lg:font-bold lg:text-2xl lg:ml-32">
+          <h1 className="font-content sm: mt-3 sm: text-xl sm: font-semibold lg:mt-10 lg:font-bold lg:text-2xl lg:ml-32">
             About our Store
           </h1>
-          <h2 className=" sm: mt-3 lg:mt-5 font-content lg:text-justify lg:ml-32 lg:w-8/12 lg:leading-loose">
+          <h2 className=" sm: mt-3 lg:mt-5 font-content text-justify lg:ml-32 lg:w-8/12 lg:leading-loose">
             Kannadiyar Nattumarunthu Kadai takes pride in reviving some of the
             ancient Siddha formulations under the brand name of Kannadiyar. For
             more than three generations, the company has been actively engaged
@@ -49,7 +49,7 @@ function About() {
           alt=""
         />
       </div>
-      <div className="  lg:bg-slate-100 lg:mt-5 lg:pb-5">
+      <div className="  lg:bg-orange-50 lg:mt-5 lg:pb-5">
         <img
           className="sm:ml-20 sm: mt-3 md:ml-72 lg:pt-2 lg:w-32 lg:h-32 lg:ml-[700px] ml-[150px]"
           src="src/assets/trust.png"
@@ -63,7 +63,7 @@ function About() {
         </h1>
 
         <div className=" sm: flex sm: flex-col lg:flex lg:flex-row lg:ml-60 lg:mt-5 p-4">
-          <div className="sm: flex sm: flex-col sm: bg-gray-200 sm: ml-2 sm: mr-2 sm: mt-2 sm: rounded-md sm: shadow-md lg:flex lg:flex-col lg:mr-28 lg:bg-white lg:w-1/3 lg:h-96 lg:rounded-md lg:shadow-md">
+          <div className="sm: flex sm: flex-col sm: bg-orange-50 sm: ml-2 sm: mr-2 sm: mt-2 sm: rounded-md sm: shadow-md lg:flex lg:flex-col lg:mr-28 lg:bg-white lg:w-1/3 lg:h-96 lg:rounded-md lg:shadow-md">
             <h2 className=" font-semibold text-2xl p-4 font-content text-primecolor">
               Our Aim
             </h2>
@@ -83,7 +83,7 @@ function About() {
               agricultural productivity.
             </p>
           </div>
-          <div className="sm: flex sm: flex-col sm: mt-3 sm: bg-gray-200 sm: ml-2 sm: mr-2 sm: rounded-md sm: shadow-md  lg:flex lg:flex-col lg:ml-40 lg:bg-white lg:w-1/3 lg:h-96 lg:rounded-md lg:shadow-md ">
+          <div className="sm: flex sm: flex-col sm: mt-3 sm: bg-orange-50 sm: ml-2 sm: mr-2 sm: rounded-md sm: shadow-md  lg:flex lg:flex-col lg:ml-40 lg:bg-white lg:w-1/3 lg:h-96 lg:rounded-md lg:shadow-md ">
             <h2 className="font-semibold font-content text-2xl p-4 text-primecolor">
               Our Strength
             </h2>
@@ -108,20 +108,20 @@ function About() {
       <div className="lg:flex lg:flex-row lg:ml-16">
         <img
           src="src/assets/ab-i1 1.png"
-          className="sm: mt-3 h-60 w-60  sm:w-11/12 ml-16 rounded-lg lg:w-64 lg:ml-14 lg:h-130 lg:mt-7 lg:rounded-bl-3xl lg:rounded-tr-3xl"
+          className="sm: mt-3 h-60 w-60  sm:w-11/12 ml-24 rounded-lg lg:w-64 lg:ml-14 lg:h-130 lg:mt-7 lg:rounded-bl-3xl lg:rounded-tr-3xl"
           alt=""
         />
 
         <img
           src="src/assets/ab-i2 1.png"
-          className=" sm: mt-3 h-60 w-60 rounded-lg ml-16 lg:w-64 lg:h-130 lg:mt-7 lg:ml-14 lg:rounded-tl-3xl lg:rounded-br-3xl"
+          className=" sm: mt-3 h-60 w-60 rounded-lg ml-24 lg:w-64 lg:h-130 lg:mt-7 lg:ml-14 lg:rounded-tl-3xl lg:rounded-br-3xl"
           alt=""
         />
         <div className="sm: mt-3 lg:flex lg:flex-col p-4">
-          <h1 className="sm: ml-1 sm: font-content sm: font-semibold -mt-2  lg:font-bold lg:text-2xl lg:ml-32">
+          <h1 className="sm: ml-1 font-content sm: font-semibold -mt-2  lg:font-bold lg:text-2xl lg:ml-32">
             About Siddha Medicine
           </h1>
-          <h2 className="sm: font-content sm: ml-1 sm: mt-3  g:mt-5 mb-20 lg:text-justify lg:ml-32 lg:w-8/12 lg:leading-loose">
+          <h2 className="font-content sm: ml-1 sm: mt-3  g:mt-5 mb-20 text-justify lg:ml-32 lg:w-8/12 lg:leading-loose">
             Siddha Medicine (Tamil Citta or Tamil-maruttuvam) is a system of
             traditional medicine originated in Tamil Nadu, South India.
             According to experts, there are 18 principal Siddhars who founded

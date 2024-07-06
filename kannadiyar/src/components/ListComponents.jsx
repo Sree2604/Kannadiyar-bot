@@ -33,7 +33,7 @@ function ListComponents() {
 
   return (
     <div className="sm: mt-3">
-      <div className="sm: mt-3 sm: w-[300px] sm: ml-2  lg:mt-5 lg:ml-40 lg:flex lg:flex-col border-collapse border-2">
+      <div className="sm: mt-3 sm: w-[300px] sm: ml-16  lg:mt-5 lg:ml-40 lg:flex lg:flex-col border-collapse border-2">
         {categories.map((category) => (
           <Dropdown.Item
             key={category.id}
@@ -42,7 +42,7 @@ function ListComponents() {
           >
             <img
               src={`${baseurl}categories/${category.image}`}
-              className="rounded-full w-10 h-10"
+              className="rounded-full w-10 h-10 mr-2"
               alt={category.name}
             />
             {category.category}
