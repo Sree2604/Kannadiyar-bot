@@ -70,7 +70,7 @@ function ProductViewPage() {
         <DescriptionBox productData={product} />
 
         <div className=" lg:mt-10">
-          <h1 className="lg:text-2xl lg:ml-11 lg:font-semibold">
+          <h1 className="lg:text-2xl lg:ml-11 lg:font-semibold font-content  sm: ml-5 mb-3 lg:mt-6 mt-6 text-xl text-primecolo">
             Frequently Purchased
           </h1>
           <ProductCards product={productData} />

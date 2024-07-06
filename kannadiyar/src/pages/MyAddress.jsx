@@ -8,6 +8,7 @@ import GreenThing from "../components/GreenThing";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Share from "../components/Share";
+import Halmark from "../components/Halmark";
 
 
 function MyAddress() {
@@ -38,6 +39,7 @@ function MyAddress() {
           <Myaddress />
         </div>
       </div>
+      <Halmark/>
       <Footer />
       <Share/>
     </>

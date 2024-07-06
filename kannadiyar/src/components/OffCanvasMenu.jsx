@@ -36,6 +36,12 @@ const OffCanvasMenu = ({ isOpen, onClose }) => {
         <div className="mb-4">
           <Link to={`/contact`}>Contact</Link>
         </div>
+        <div className="mb-4">
+          <Link to={`/`}>Logout</Link>
+        </div>
+        <div>
+          
+        </div>
       </div>
     </div>
   );

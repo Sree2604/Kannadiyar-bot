@@ -4,6 +4,7 @@ import WishlistItems from "../components/WishlistItems";
 import Footer from "../components/Footer";
 import GreenThing from "../components/GreenThing";
 import Share from "../components/Share";
+import Halmark from "../components/Halmark";
 
 function Wishlist() {
   return (
@@ -12,6 +13,7 @@ function Wishlist() {
       <Topnavbar />
       <GreenThing header={"Wishlist"} />
       <WishlistItems />
+      <Halmark/>
       <Footer />
       <Share/>
     </>

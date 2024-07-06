@@ -7,6 +7,7 @@ import GreenThing from "../components/GreenThing";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Orderitem from "../components/OrderItems";
+import Halmark from "../components/Halmark"
 import Share from "../components/Share";
 
 function MyOrders() {
@@ -37,6 +38,7 @@ function MyOrders() {
          
         </div>
       </div>
+      <Halmark/>
       <Footer/>
       <Share/>
     </>
